@@ -524,12 +524,16 @@ each spike.
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=\textwidth]{figures/spike_bg_residuals.pdf}
-  \caption{Pointwise residuals $f(x) - u_\theta(x)$ for each algorithm at
-           budget 192, sorted by $L^2$ error (best at top).  The two spike
-           regions at $x=0.3$ and $x=0.7$ are clearly visible in the
-           residuals of fixed-grid methods; learnable methods suppress them
-           almost completely.}
+  \includegraphics[width=\textwidth]{figures/spike_bg_residuals_g1.pdf}
+  \includegraphics[width=\textwidth]{figures/spike_bg_residuals_g2.pdf}
+  \includegraphics[width=\textwidth]{figures/spike_bg_residuals_g3.pdf}
+  \includegraphics[width=\textwidth]{figures/spike_bg_residuals_g4.pdf}
+  \includegraphics[width=\textwidth]{figures/spike_bg_residuals_g5.pdf}
+  \caption{Pointwise residuals $f(x) - u_\theta(x)$ for all 15 algorithms at
+           budget 192, grouped by performance (best at top).  The two spike
+           regions at $x=0.3$ and $x=0.7$ dominate the residuals of
+           fixed-grid methods; learnable methods suppress them nearly
+           completely.}
   \label{fig:spike_bg_residuals}
 \end{figure}
 

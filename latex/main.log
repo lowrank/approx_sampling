@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2024.12.18)  1 MAY 2026 18:33
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2024.12.18)  1 MAY 2026 18:37
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -612,23 +612,50 @@ File: figures/spike_bg_results.pdf Graphic file (type pdf)
 Package pdftex.def Info: figures/spike_bg_results.pdf  used on input line 520.
 (pdftex.def)             Requested size: 466.62503pt x 279.97719pt.
 [9 <./figures/convergence_summary.pdf>]
-<figures/spike_bg_residuals.pdf, id=512, 715.03323pt x 397.27986pt>
-File: figures/spike_bg_residuals.pdf Graphic file (type pdf)
-<use figures/spike_bg_residuals.pdf>
-Package pdftex.def Info: figures/spike_bg_residuals.pdf  used on input line 527
-.
-(pdftex.def)             Requested size: 466.62503pt x 259.25938pt.
- [10 <./figures/spike_bg_results.pdf> <./figures/spike_bg_residuals.pdf>]
-Overfull \hbox (5.34418pt too wide) in paragraph at lines 563--566
+<figures/spike_bg_residuals_g1.pdf, id=512, 715.4391pt x 136.946pt>
+File: figures/spike_bg_residuals_g1.pdf Graphic file (type pdf)
+<use figures/spike_bg_residuals_g1.pdf>
+Package pdftex.def Info: figures/spike_bg_residuals_g1.pdf  used on input line 
+527.
+(pdftex.def)             Requested size: 466.62503pt x 89.32101pt.
+<figures/spike_bg_residuals_g2.pdf, id=513, 715.27602pt x 136.86758pt>
+File: figures/spike_bg_residuals_g2.pdf Graphic file (type pdf)
+<use figures/spike_bg_residuals_g2.pdf>
+Package pdftex.def Info: figures/spike_bg_residuals_g2.pdf  used on input line 
+528.
+(pdftex.def)             Requested size: 466.62503pt x 89.29074pt.
+<figures/spike_bg_residuals_g3.pdf, id=514, 715.42845pt x 136.86758pt>
+File: figures/spike_bg_residuals_g3.pdf Graphic file (type pdf)
+<use figures/spike_bg_residuals_g3.pdf>
+Package pdftex.def Info: figures/spike_bg_residuals_g3.pdf  used on input line 
+529.
+(pdftex.def)             Requested size: 466.62503pt x 89.26985pt.
+<figures/spike_bg_residuals_g4.pdf, id=515, 715.31052pt x 136.86758pt>
+File: figures/spike_bg_residuals_g4.pdf Graphic file (type pdf)
+<use figures/spike_bg_residuals_g4.pdf>
+Package pdftex.def Info: figures/spike_bg_residuals_g4.pdf  used on input line 
+530.
+(pdftex.def)             Requested size: 466.62503pt x 89.28656pt.
+<figures/spike_bg_residuals_g5.pdf, id=516, 715.48242pt x 136.86758pt>
+File: figures/spike_bg_residuals_g5.pdf Graphic file (type pdf)
+<use figures/spike_bg_residuals_g5.pdf>
+Package pdftex.def Info: figures/spike_bg_residuals_g5.pdf  used on input line 
+531.
+(pdftex.def)             Requested size: 466.62503pt x 89.2636pt.
+ [10 <./figures/spike_bg_results.pdf>]
+[11 <./figures/spike_bg_residuals_g1.pdf> <./figures/spike_bg_residuals_g2.pdf>
+ <./figures/spike_bg_residuals_g3.pdf> <./figures/spike_bg_residuals_g4.pdf> <.
+/figures/spike_bg_residuals_g5.pdf>]
+Overfull \hbox (5.34418pt too wide) in paragraph at lines 567--570
 []\OT1/cmr/bx/n/10.95 REINFORCE \OT1/cmr/m/n/10.95 (ad-ver-sar-ial, im-por-tanc
 e sam-pling): con-sis-tent but high-variance; the moving-
  []
 
-[11] [12]
+[12] [13]
 
 Package natbib Warning: There were undefined citations.
 
-[13] (./main.aux)
+[14] (./main.aux)
  ***********
 LaTeX2e <2023-11-01> patch level 1
 L3 programming layer <2024-01-22>
@@ -637,13 +664,13 @@ Package rerunfilecheck Info: File `main.out' has not changed.
 (rerunfilecheck)             Checksum: E6919A0BDA039D703B80FD0281E62576;6582.
  ) 
 Here is how much of TeX's memory you used:
- 13209 strings out of 474222
- 206297 string characters out of 5748732
+ 13238 strings out of 474222
+ 207537 string characters out of 5748732
  1951975 words of memory out of 5000000
- 35187 multiletter control sequences out of 15000+600000
+ 35215 multiletter control sequences out of 15000+600000
  571130 words of font info for 86 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 75i,12n,79p,541b,598s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 75i,12n,79p,541b,626s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></us
 r/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/shar
 e/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/share/texl
@@ -662,10 +689,10 @@ exmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb></usr/share/texlive/texmf-d
 ist/fonts/type1/public/amsfonts/cm/cmtt10.pfb></usr/share/texlive/texmf-dist/fo
 nts/type1/public/amsfonts/symbols/msbm10.pfb></usr/share/texmf/fonts/type1/publ
 ic/cm-super/sfrm1095.pfb>
-Output written on main.pdf (13 pages, 886468 bytes).
+Output written on main.pdf (14 pages, 932299 bytes).
 PDF statistics:
- 773 PDF objects out of 1000 (max. 8388607)
- 377 compressed objects within 4 object streams
- 104 named destinations out of 1000 (max. 500000)
- 287 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 943 PDF objects out of 1000 (max. 8388607)
+ 400 compressed objects within 4 object streams
+ 105 named destinations out of 1000 (max. 500000)
+ 307 words of extra memory for PDF output out of 10000 (max. 10000000)
 

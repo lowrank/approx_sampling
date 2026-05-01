@@ -1,0 +1,77 @@
+site_name: "Approx Sampling"
+site_description: Comparison of 15+ sampling strategies for neural network function approximation in L²[0,1]
+repo_url: https://github.com/username/approx_sampling
+repo_name: approx_sampling
+
+theme:
+  name: material
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.instant
+    - navigation.tabs
+    - navigation.sections
+    - content.code.copy
+    - search.suggest
+    - search.highlight
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.arithmatex:
+      generic: false
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - toc:
+      permalink: true
+
+extra_javascript:
+  - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
+
+nav:
+  - Home: index.md
+  - Algorithms:
+      - Overview: algorithms.md
+      - Empirical:
+          - Uniform: algorithms/uniform.md
+          - Chebyshev: algorithms/chebyshev.md
+          - QMC Sobol': algorithms/qmc_sobol.md
+          - QMC Halton: algorithms/qmc_halton.md
+      - Adaptive:
+          - Adaptive Residual: algorithms/adaptive_residual.md
+          - Iterative Uniform: algorithms/iter_uniform.md
+          - Iterative Chebyshev: algorithms/iter_chebyshev.md
+      - Generative (REINFORCE):
+          - Adversarial: algorithms/adversarial.md
+          - Importance Sampling: algorithms/importance_sampling.md
+      - Generative (Reparam):
+          - Normalizing Flow: algorithms/normalizing_flow.md
+          - MDN: algorithms/mdn.md
+      - Generative (Score):
+          - Diffusion: algorithms/diffusion.md
+      - Particle:
+          - SVGD: algorithms/svgd.md
+      - Uncertainty:
+          - Ensemble: algorithms/ensemble.md
+          - GP-UCB: algorithms/gp_ucb.md
+      - Policy / Meta:
+          - Policy Gradient: algorithms/policy.md
+          - Neural Process: algorithms/neural_process.md
+  - Tasks: tasks.md
+  - Results: results.md

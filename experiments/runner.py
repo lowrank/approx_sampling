@@ -286,7 +286,7 @@ def run_experiment(
         task = FunctionApproximation(f_target=func.evaluate, label=func_name)
 
         print(f"\n{'='*70}")
-        print(f"[{fi+1}/{n_funcs}] {func_name}")
+        print(f"[{fi+1}/{n_funcs}] {func_name}  [{device}]")
         print(f"{'='*70}")
 
         for budget in budgets:

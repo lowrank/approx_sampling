@@ -89,7 +89,9 @@ class DownstreamTask(ABC):
         y_ref = self.reference(eval_grid)
         model.eval()
         with torch.no_grad():
-            t = torch.from_numpy(eval_grid.astype(np.float32))
+            t = torch.from_numpy(eval_grid.astype(np.float32)).to(
+                next(model.parameters()).device
+            )
             y_pred = self.predict(model, t).cpu().numpy()
         model.train()
         return float(np.sqrt(trapezoid((y_pred - y_ref) ** 2, eval_grid)))

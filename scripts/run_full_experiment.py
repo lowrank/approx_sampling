@@ -104,7 +104,8 @@ def parse_args() -> argparse.Namespace:
                    help="Built-in model (mlp, mmnn).")
     p.add_argument("--model-factory", type=str, default=None,
                    help="Custom 'pkg.module:function'.")
-    p.add_argument("--device", type=str, default="cpu", choices=["cpu", "cuda"])
+    p.add_argument("--device", type=str, default="auto", choices=["cpu", "cuda", "auto"],
+                   help="PyTorch device (default: auto-detect CUDA).")
     p.add_argument("--output-dir", type=str, default="results")
     p.add_argument("--seed", type=int, default=42)
     p.add_argument("--generated", action="store_true",
@@ -131,6 +132,8 @@ def main() -> None:
 
     budgets = make_budgets(max_budget=args.max_budget, step=64)
     factory = _resolve_factory(args.model, args.model_factory)
+
+    device = args.device if args.device != "auto" else ("cuda" if torch.cuda.is_available() else "cpu")
 
     n_pow2 = sum(1 for b in budgets if b > 0 and (b & (b - 1)) == 0)
     n_nonpow2 = len(budgets) - n_pow2
@@ -160,7 +163,7 @@ def main() -> None:
         generated=args.generated,
         n_func_per_class=args.n_func_per_class,
         split=args.split,
-        device=args.device,
+        device=device,
         output_dir=args.output_dir,
         seed=args.seed,
     )

@@ -67,6 +67,7 @@ def _build_algorithms(
     model_factory: Callable[[], nn.Module],
     device: str,
     skip_power_of_two: bool = False,
+    lr: float = 1.5e-3,
 ) -> List[Tuple[str, Any]]:
     """Return list of (name, algorithm_instance) for a given *budget*.
 
@@ -85,39 +86,39 @@ def _build_algorithms(
     # --- Empirical ---
     algs.append(("uniform", UniformSampling(
         budget=budget, model=model_factory(),
-        epochs=_epochs(), batch_size=64, lr=1e-3, device=device,
+        epochs=_epochs(), batch_size=64, lr=lr, device=device,
     )))
     algs.append(("chebyshev", ChebyshevSampling(
         budget=budget, model=model_factory(),
-        epochs=_epochs(), batch_size=64, lr=1e-3, device=device,
+        epochs=_epochs(), batch_size=64, lr=lr, device=device,
     )))
     if not skip_power_of_two:
         algs.append(("qmc_sobol", QMCSampling(
             budget=budget, model=model_factory(),
-            sequence="sobol", epochs=_epochs(), batch_size=64, lr=1e-3, device=device,
+            sequence="sobol", epochs=_epochs(), batch_size=64, lr=lr, device=device,
         )))
     algs.append(("qmc_halton", QMCSampling(
         budget=budget, model=model_factory(),
-        sequence="halton", epochs=_epochs(), batch_size=64, lr=1e-3, device=device,
+        sequence="halton", epochs=_epochs(), batch_size=64, lr=lr, device=device,
     )))
     algs.append(("adaptive_residual", AdaptiveResidualSampling(
         budget=budget, model=model_factory(),
         n_initial=min(budget, max(20, budget // 4)),
         n_add=min(50, max(10, budget // 8)),
         candidate_size=2000, epochs_per_round=_epochs(TARGET//4), final_epochs=_epochs(TARGET//2),
-        batch_size=64, lr=1e-3, device=device,
+        batch_size=64, lr=lr, device=device,
     )))
 
     # --- Iterative refinement meta-methods ---
     algs.append(("iter_uniform", IterativeRefinementSampling(
         budget=budget, model=model_factory(),
         base_sampler_name="uniform", init_frac=0.4, candidate_size=2000,
-        final_epochs=_epochs(), lr=1e-3, batch_size=64, device=device,
+        final_epochs=_epochs(), lr=lr, batch_size=64, device=device,
     )))
     algs.append(("iter_chebyshev", IterativeRefinementSampling(
         budget=budget, model=model_factory(),
         base_sampler_name="chebyshev", init_frac=0.4, candidate_size=2000,
-        final_epochs=_epochs(), lr=1e-3, batch_size=64, device=device,
+        final_epochs=_epochs(), lr=lr, batch_size=64, device=device,
     )))
 
     # --- Learnable: REINFORCE-based ---
@@ -157,18 +158,18 @@ def _build_algorithms(
         budget=budget, model=model_factory(),
         n_particles=50, kernel_width=0.05, svgd_step_size=0.01,
         svgd_steps_per_round=50, epochs_per_round=_epochs(TARGET // n_rounds_est),
-        lr=1e-3, batch_size=64, device=device,
+        lr=lr, batch_size=64, device=device,
     )))
 
     # --- Uncertainty-based ---
     algs.append(("ensemble", EnsembleSampling(
         budget=budget, model=model_factory(),
         n_members=5, batch_size=64,
-        epochs_per_round=_epochs(TARGET // 5), lr=1e-3, device=device,
+        epochs_per_round=_epochs(TARGET // 5), lr=lr, device=device,
     )))
     algs.append(("gp_ucb", GPUCBSampling(
         budget=budget, model=model_factory(),
-        batch_size=64, epochs_per_round=_epochs(), lr=1e-3, beta=2.0, device=device,
+        batch_size=64, epochs_per_round=_epochs(), lr=lr, beta=2.0, device=device,
     )))
 
     # --- Policy ---
@@ -217,6 +218,7 @@ def run_experiment(
     device: str = "cpu",
     output_dir: str = "results",
     seed: int = 42,
+    lr: float = 1.5e-3,
 ) -> Dict[str, Any]:
     """Run multi-budget evaluation.
 
@@ -296,6 +298,7 @@ def run_experiment(
                 model_factory=model_factory,
                 device=device,
                 skip_power_of_two=(not is_pow2),
+                lr=lr,
             )
 
             print(f"  budget={budget} ({len(algs)} algorithms)")

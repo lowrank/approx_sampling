@@ -207,7 +207,7 @@ def generate_convergence_curves() -> None:
                 ax.plot(b, e, "o-", color=c, label=ALG_LABELS.get(an, an),
                         markersize=4, linewidth=1.2)
         ax.set_xscale("log"); ax.set_yscale("log")
-        ax.set_xlabel("# samples", fontsize=11); ax.set_ylabel(r"$L^2$ error", fontsize=11)
+        ax.set_xlabel("# samples", fontsize=11); ax.set_ylabel("L2 error", fontsize=11)
         ax.set_title(fn.replace("_", r"\_"), fontsize=12)
         ax.legend(fontsize=5.5, ncol=3, loc="upper right",
                   framealpha=0.8, borderpad=0.3, handlelength=1.2)
@@ -296,7 +296,7 @@ def generate_convergence_curves() -> None:
             ax.fill_between(common_budgets[:max_len], mean - std, mean + std,
                             color=c, alpha=0.1)
         ax.set_xscale("log"); ax.set_yscale("log")
-        ax.set_xlabel("# samples"); ax.set_ylabel(r"$L^2$ error")
+        ax.set_xlabel("# samples"); ax.set_ylabel("L2 error")
         ax.set_title(f"{cls_label} class — mean ± std ({len(cls_fns)} functions)")
         ax.legend(fontsize=5.5, ncol=3, loc="upper right", framealpha=0.8)
         ax.grid(True, alpha=0.3)
@@ -350,7 +350,7 @@ def generate_function_illustrations() -> None:
         fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(8, 4.5),
                                         gridspec_kw={"height_ratios": [3, 1]})
         ax1.plot(x, y, "k-", linewidth=0.8)
-        ax1.set_ylabel(r"$f(x)$")
+        ax1.set_ylabel("f(x)")
         ax1.set_title(f"{fn} — {func.label}", fontsize=9)
         ax1.set_xlim(0, 1)
 

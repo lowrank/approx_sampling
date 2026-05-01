@@ -503,17 +503,15 @@ experiment suite.
 
 \subsection{Case study: sharp spikes on smooth background}
 
-To illustrate the advantage of adaptive and learnable sampling on a concrete
-example, we consider
+We demonstrate the methods on
 
 \begin{equation}
   f(x) = \sin(2\pi x) + 2e^{-200(x-0.3)^2} - 1.5e^{-300(x-0.7)^2},
 \end{equation}
 
-shown in Figure~\ref{fig:spike_bg}.  It combines a smooth oscillatory
-background with two narrow Gaussian spikes (FWHM $\approx 2.4\%$ and $2.0\%$
-of $[0,1]$).  A uniform grid of 64--192 points places only 1--2 points within
-each spike.
+a smooth oscillatory background with two narrow Gaussian spikes at
+$x=0.3$ and $x=0.7$ (FWHM $\approx 2.4\%$ and $2.0\%$ of $[0,1]$).
+A uniform grid of 64--192 points places only 1--2 points within each spike.
 
 \begin{figure}[H]
   \centering
@@ -522,25 +520,69 @@ each spike.
   \label{fig:spike_bg}
 \end{figure}
 
+\begin{table}[H]
+  \centering
+  \caption{$L^2$ errors at budget 192 on the spike+bg function.}
+  \label{tab:spike_bg}
+  \small
+  \begin{tabular}{@{}lrlr@{}}
+    \toprule
+    Algorithm & $L^2$ error & Algorithm & $L^2$ error \\
+    \midrule
+    diffusion          & $3.1\times10^{-3}$ & iter\_chebyshev    & $2.3\times10^{-2}$ \\
+    importance\_sampling & $1.9\times10^{-3}$ & iter\_uniform      & $3.2\times10^{-2}$ \\
+    policy             & $2.4\times10^{-3}$ & chebyshev          & $7.4\times10^{-2}$ \\
+    adversarial        & $2.4\times10^{-3}$ & qmc\_halton        & $5.1\times10^{-2}$ \\
+    mdn                & $2.5\times10^{-3}$ & qmc\_sobol         & $4.5\times10^{-2}$ \\
+    normalizing\_flow   & $3.2\times10^{-3}$ & uniform            & $5.7\times10^{-2}$ \\
+    neural\_process     & $2.9\times10^{-3}$ & adaptive\_residual  & $1.4\times10^{-2}$ \\
+    gp\_ucb            & $1.6\times10^{-2}$ &                    & \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+The learnable methods achieve errors $\sim 2$--$4\times10^{-3}$, while
+uniform and Chebyshev are $\sim 25\times$ worse.  The adaptive residual
+method is intermediate at $1.4\times10^{-2}$.
+
+Figure~\ref{fig:spike_bg_residuals} shows the pointwise residuals
+$f(x)-u_\theta(x)$ for every algorithm, grouped by performance.
+
 \begin{figure}[H]
   \centering
   \includegraphics[width=\textwidth]{figures/spike_bg_residuals_g1.pdf}
-  \includegraphics[width=\textwidth]{figures/spike_bg_residuals_g2.pdf}
-  \includegraphics[width=\textwidth]{figures/spike_bg_residuals_g3.pdf}
-  \includegraphics[width=\textwidth]{figures/spike_bg_residuals_g4.pdf}
-  \includegraphics[width=\textwidth]{figures/spike_bg_residuals_g5.pdf}
-  \caption{Pointwise residuals $f(x) - u_\theta(x)$ for all 15 algorithms at
-           budget 192, grouped by performance (best at top).  The two spike
-           regions at $x=0.3$ and $x=0.7$ dominate the residuals of
-           fixed-grid methods; learnable methods suppress them nearly
-           completely.}
-  \label{fig:spike_bg_residuals}
+  \caption{Residuals (group 1/5): best 3 algorithms.}
+  \label{fig:spike_bg_residuals_g1}
 \end{figure}
 
-At budget 192 the best algorithms are MDN ($2.96\times10^{-3}$), policy
-($3.03\times10^{-3}$), neural process ($3.26\times10^{-3}$), adversarial
-($3.36\times10^{-3}$), and diffusion ($3.60\times10^{-3}$).  Uniform
-($8.6\times10^{-2}$) and Chebyshev ($8.2\times10^{-2}$) are $\sim 25\times$
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{figures/spike_bg_residuals_g2.pdf}
+  \caption{Residuals (group 2/5).}
+  \label{fig:spike_bg_residuals_g2}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{figures/spike_bg_residuals_g3.pdf}
+  \caption{Residuals (group 3/5).}
+  \label{fig:spike_bg_residuals_g3}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{figures/spike_bg_residuals_g4.pdf}
+  \caption{Residuals (group 4/5).}
+  \label{fig:spike_bg_residuals_g4}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{figures/spike_bg_residuals_g5.pdf}
+  \caption{Residuals (group 5/5): worst 3 algorithms.  Note the larger
+           $y$-axis scale — the spike regions dominate.}
+  \label{fig:spike_bg_residuals}
+\end{figure}
 worse.  Adaptive residual ($7.1\times10^{-3}$) is competitive but 2--3$\times$
 behind the learnable methods that model the density with finer granularity.
 

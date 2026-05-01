@@ -260,6 +260,13 @@ FUNCTION_LIBRARY: Dict[str, TestFunction] = {
         dense_resolution=800,
         local_variation=None,
     ),
+    "spike_bg_demo": TestFunction(
+        name="spike_bg_demo",
+        label=r"$\sin(2\pi x)+2e^{-200(x-0.3)^2}-1.5e^{-300(x-0.7)^2}$",
+        callable=lambda x: np.sin(2*np.pi*x) + 2*np.exp(-200*(x-0.3)**2) - 1.5*np.exp(-300*(x-0.7)**2),
+        dense_resolution=2000,
+        local_variation=None,
+    ),
 }
 
 

@@ -1,6 +1,7 @@
 site_name: "Approx Sampling"
 site_description: Comparison of 15+ sampling strategies for neural network function approximation in L²[0,1]
-repo_url: https://github.com/username/approx_sampling
+site_url: https://lowrank.github.io/approx_sampling/
+repo_url: https://github.com/lowrank/approx_sampling
 repo_name: approx_sampling
 
 theme:

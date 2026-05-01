@@ -27,6 +27,8 @@ from __future__ import annotations
 
 import argparse
 import importlib
+import json
+import multiprocessing
 import os
 import sys
 from typing import Callable, List, Optional
@@ -88,8 +90,106 @@ def make_budgets(start: int = 64, max_budget: int = 196, step: int = 32) -> List
 
 
 # ---------------------------------------------------------------------------
-# CLI
+# Parallel execution
 # ---------------------------------------------------------------------------
+
+
+def _worker(args_tuple):
+    """Run experiment on a subset of functions (called in a subprocess)."""
+    (func_names_subset, budgets, model_name, model_factory_str,
+     generated, n_func_per_class, split, device, output_dir, base_seed, worker_id) = args_tuple
+
+    # Rebuild model factory in subprocess
+    if model_factory_str:
+        parts = model_factory_str.split(":")
+        mod = importlib.import_module(parts[0])
+        factory = getattr(mod, parts[1])
+    elif model_name in _BUILTIN:
+        factory = _BUILTIN[model_name]
+    else:
+        raise ValueError(f"Unknown model: {model_name}")
+
+    out = os.path.join(output_dir, f"curves_part_{worker_id:03d}.json")
+    seed = base_seed + worker_id * 1000
+
+    run_experiment(
+        function_names=func_names_subset,
+        budgets=budgets,
+        model_factory=factory,
+        generated=generated,
+        n_func_per_class=n_func_per_class,
+        split=split,
+        device=device,
+        output_dir=output_dir,
+        seed=seed,
+        quiet=True,
+    )
+
+    # Rename curves.json → part file
+    curves_path = os.path.join(output_dir, "curves.json")
+    if os.path.exists(curves_path):
+        os.rename(curves_path, out)
+    return worker_id
+
+
+def _run_parallel(func_names, budgets, factory, generated, n_func_per_class,
+                  split, device, output_dir, seed, n_workers):
+    """Distribute function names across workers, merge results."""
+    import copy
+
+    # Resolve function list if not explicitly given
+    if func_names is None:
+        from data.function_library import FUNCTION_LIBRARY
+        if generated:
+            from data.function_generator import generate_function_library
+            lib = generate_function_library(n_per_class=n_func_per_class, seed=seed, split=split)
+        else:
+            lib = FUNCTION_LIBRARY
+        func_names = sorted(lib.keys())
+
+    # Detect model-factory string for subprocess reconstruction
+    model_name = "mlp"  # default, will be overridden
+    model_factory_str = None
+    if factory.__module__ and hasattr(factory, '__qualname__'):
+        model_factory_str = f"{factory.__module__}:{factory.__qualname__}"
+    else:
+        # Fallback: use built-in mlp
+        model_name = "mlp"
+
+    # Split functions across workers
+    chunks = np.array_split(func_names, n_workers)
+    chunk_sizes = [len(c) for c in chunks]
+
+    print(f"  Splitting {len(func_names)} functions across {n_workers} workers:")
+    for i, sz in enumerate(chunk_sizes):
+        if sz > 0:
+            print(f"    worker {i}: {sz} functions")
+
+    args_list = []
+    for i, chunk in enumerate(chunks):
+        if len(chunk) == 0:
+            continue
+        args_list.append((
+            list(chunk), budgets, model_name, model_factory_str,
+            generated, n_func_per_class, split, device, output_dir, seed, i,
+        ))
+
+    with multiprocessing.Pool(processes=min(len(args_list), n_workers)) as pool:
+        for wid in pool.imap_unordered(_worker, args_list):
+            print(f"  [worker {wid}] finished")
+
+    # Merge part files into curves.json
+    merged = {}
+    for i in range(n_workers):
+        part_path = os.path.join(output_dir, f"curves_part_{i:03d}.json")
+        if os.path.exists(part_path):
+            with open(part_path, "r") as f:
+                merged.update(json.load(f))
+            os.remove(part_path)
+
+    with open(os.path.join(output_dir, "curves.json"), "w") as f:
+        json.dump(merged, f, indent=2)
+    print(f"\n  Merged {len(merged)} functions → curves.json")
 
 
 def parse_args() -> argparse.Namespace:
@@ -115,6 +215,8 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--split", type=str, default="all",
                    choices=["all", "train", "test"],
                    help="Use train (70%%), test (30%%), or all functions.")
+    p.add_argument("--workers", type=int, default=1,
+                   help="Number of parallel workers (default: 1 = sequential).")
     return p.parse_args()
 
 
@@ -152,21 +254,36 @@ def main() -> None:
     print(f"  Power-of-2:    {n_pow2} (Sobol only)")
     print(f"  Algorithms:    {n_algs_per_budget} (17)")
     print(f"  Total runs:    ~{total_runs}")
-    print(f"  Device:        {args.device}")
+    print(f"  Device:        {device}")
+    print(f"  Workers:       {args.workers}")
     print(f"  Output:        {args.output_dir}")
     print(f"{'='*70}\n")
 
-    run_experiment(
-        function_names=funcs,
-        budgets=budgets,
-        model_factory=factory,
-        generated=args.generated,
-        n_func_per_class=args.n_func_per_class,
-        split=args.split,
-        device=device,
-        output_dir=args.output_dir,
-        seed=args.seed,
-    )
+    if args.workers > 1:
+        _run_parallel(
+            func_names=funcs,
+            budgets=budgets,
+            factory=factory,
+            generated=args.generated,
+            n_func_per_class=args.n_func_per_class,
+            split=args.split,
+            device=device,
+            output_dir=args.output_dir,
+            seed=args.seed,
+            n_workers=args.workers,
+        )
+    else:
+        run_experiment(
+            function_names=funcs,
+            budgets=budgets,
+            model_factory=factory,
+            generated=args.generated,
+            n_func_per_class=args.n_func_per_class,
+            split=args.split,
+            device=device,
+            output_dir=args.output_dir,
+            seed=args.seed,
+        )
 
     curves_path = os.path.join(args.output_dir, "curves.json")
     print(f"\nRaw results saved → {os.path.abspath(curves_path)}")

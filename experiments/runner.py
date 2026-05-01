@@ -217,6 +217,7 @@ def run_experiment(
     device: str = "cpu",
     output_dir: str = "results",
     seed: int = 42,
+    quiet: bool = False,
 ) -> Dict[str, Any]:
     """Run multi-budget evaluation.
 
@@ -237,6 +238,8 @@ def run_experiment(
     device : str
     output_dir : str
     seed : int
+    quiet : bool
+        Suppress per-function/budget output (for parallel workers).
 
     Returns
     -------
@@ -245,6 +248,8 @@ def run_experiment(
     """
     torch.manual_seed(seed)
     np.random.seed(seed)
+
+    _p = (lambda *a, **kw: None) if quiet else print
 
     if budgets is None:
         budgets = [32, 64, 128, 256, 512, 1024]
@@ -285,9 +290,9 @@ def run_experiment(
         from tasks.downstream import FunctionApproximation
         task = FunctionApproximation(f_target=func.evaluate, label=func_name)
 
-        print(f"\n{'='*70}")
-        print(f"[{fi+1}/{n_funcs}] {func_name}  [{device}]")
-        print(f"{'='*70}")
+        _p(f"\n{'='*70}")
+        _p(f"[{fi+1}/{n_funcs}] {func_name}  [{device}]")
+        _p(f"{'='*70}")
 
         for budget in budgets:
             is_pow2 = _is_power_of_two(budget)
@@ -298,7 +303,7 @@ def run_experiment(
                 skip_power_of_two=(not is_pow2),
             )
 
-            print(f"  budget={budget} ({len(algs)} algorithms)")
+            _p(f"  budget={budget} ({len(algs)} algorithms)")
 
             for alg_name, alg in algs:
                 t0 = time.time()
@@ -312,12 +317,12 @@ def run_experiment(
                     err = float(result.final_l2_error)
                     curves[func_name][alg_name]["budgets"].append(budget)
                     curves[func_name][alg_name]["errors"].append(err)
-                    print(
+                    _p(
                         f"    {alg_name:<22s} L²={err:.6f} "
                         f"({elapsed:.1f}s)"
                     )
                 except Exception as e:
-                    print(f"    {alg_name:<22s} FAILED: {e}")
+                    _p(f"    {alg_name:<22s} FAILED: {e}")
 
     # Serialise
     serialisable = {}
@@ -342,15 +347,15 @@ def run_experiment(
     # Print summary at the largest budget
     if budgets:
         last_budget = budgets[-1]
-        print(f"\n{'='*70}")
-        print(f"  Final L² errors at budget = {last_budget}")
-        print(f"{'='*70}")
+        _p(f"\n{'='*70}")
+        _p(f"  Final L² errors at budget = {last_budget}")
+        _p(f"{'='*70}")
         alg_names_all = sorted(set(
             an for fn in serialisable for an in serialisable[fn]
         ))
         header = f"{'Function':<30s}" + "".join(f"{a:>18s}" for a in alg_names_all)
-        print(header)
-        print("-" * len(header))
+        _p(header)
+        _p("-" * len(header))
         for fn in function_names:
             row = f"{fn:<30s}"
             best = min(
@@ -367,6 +372,6 @@ def run_experiment(
                     row += f"{val:>16.6f}{star}"
                 else:
                     row += f"{'—':>18s}"
-            print(row)
+            _p(row)
 
     return serialisable

@@ -26,6 +26,7 @@ from dataclasses import dataclass
 from typing import Any, Callable, Dict, List, Optional, Tuple
 
 import numpy as np
+from scipy.integrate import trapezoid
 
 from data.function_library import TestFunction
 
@@ -39,7 +40,7 @@ _REF_GRID = np.linspace(0.0, 1.0, 4096)
 def _l2_norm(f: Callable[[np.ndarray], np.ndarray]) -> float:
     """Estimate ``||f||_L^2[0,1]`` via trapezoidal rule on a fine grid."""
     y = f(_REF_GRID)
-    return float(np.sqrt(np.trapz(y * y, _REF_GRID)))
+    return float(np.sqrt(trapezoid(y * y, _REF_GRID)))
 
 
 def _normalise(f: Callable[[np.ndarray], np.ndarray]) -> Callable[[np.ndarray], np.ndarray]:
@@ -67,7 +68,7 @@ def _estimate_resolution(
     for n in [128, 256, 512, 1024, 2048, 4000]:
         g = np.linspace(0.0, 1.0, n)
         y = f(g)
-        approx = float(np.sqrt(np.trapz(y * y, g)))
+        approx = float(np.sqrt(trapezoid(y * y, g)))
         if abs(approx - ref) / (ref + 1e-12) < tol:
             best = n
             break

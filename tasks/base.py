@@ -20,6 +20,7 @@ from typing import Callable, Optional
 import numpy as np
 import torch
 import torch.nn as nn
+from scipy.integrate import trapezoid
 
 
 class DownstreamTask(ABC):
@@ -91,7 +92,7 @@ class DownstreamTask(ABC):
             t = torch.from_numpy(eval_grid.astype(np.float32))
             y_pred = self.predict(model, t).cpu().numpy()
         model.train()
-        return float(np.sqrt(np.trapz((y_pred - y_ref) ** 2, eval_grid)))
+        return float(np.sqrt(trapezoid((y_pred - y_ref) ** 2, eval_grid)))
 
     def source_values(self, x: np.ndarray) -> np.ndarray:
         """Return the source / RHS ``f(x)`` at numpy points *x*.

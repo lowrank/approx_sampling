@@ -21,6 +21,7 @@ from dataclasses import dataclass
 from typing import Callable, Dict, List, Optional
 
 import numpy as np
+from scipy.integrate import trapezoid
 
 
 @dataclass
@@ -317,4 +318,4 @@ def compute_l2_error(
     y_true = f_target(grid)
     y_pred = f_approx(grid)
     # Trapezoidal integration
-    return float(np.sqrt(np.trapz((y_true - y_pred) ** 2, grid)))
+    return float(np.sqrt(trapezoid((y_true - y_pred) ** 2, grid)))

@@ -13,6 +13,7 @@ from typing import Any, Dict, List, Optional, Tuple
 
 import numpy as np
 import torch
+from scipy.integrate import trapezoid
 
 from models.approximator import MLP
 
@@ -114,7 +115,7 @@ class BaseSamplingAlgorithm(ABC):
             )
             y_pred = self.model(t_grid).squeeze(-1).cpu().numpy()
         self.model.train()
-        return float(np.sqrt(np.trapz((y_true - y_pred) ** 2, eval_grid)))
+        return float(np.sqrt(trapezoid((y_true - y_pred) ** 2, eval_grid)))
 
 
 

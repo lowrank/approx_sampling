@@ -39,7 +39,7 @@ _BUILTIN["mlp"] = lambda: __import__(
 
 _BUILTIN["mmnn"] = lambda: __import__(
     "models.approximator", fromlist=["MMNN"]
-).MMNN(input_size=1, rank=10, hidden_size=1000, seed=42)
+).MMNN(input_size=1, rank=5, hidden_size=200, seed=42)
 
 
 def _resolve_factory(model: str, mf: str | None) -> Callable[[], nn.Module]:

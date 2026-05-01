@@ -74,7 +74,7 @@ def _build_algorithms(
     power-of-two budgets (currently ``qmc_sobol``) are omitted.
     """
     algs: List[Tuple[str, Any]] = []
-    TARGET = 8000  # target gradient steps for all methods
+    TARGET = 1500  # target gradient steps for all methods
     batch = 64
     n_rounds_est = max(1, budget // batch)  # ~ outer iterations
     batches_per_epoch = max(1, budget // batch)

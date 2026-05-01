@@ -104,10 +104,16 @@ def _worker(args_tuple):
         parts = model_factory_str.split(":")
         mod = importlib.import_module(parts[0])
         factory = getattr(mod, parts[1])
-    elif model_name in _BUILTIN:
-        factory = _BUILTIN[model_name]
+    elif model_name == "mmnn":
+        def _mmnn_factory():
+            return __import__("models.approximator", fromlist=["MMNN"]).MMNN(
+                input_size=1, rank=10, hidden_size=1000, seed=42 + worker_id)
+        factory = _mmnn_factory
     else:
-        raise ValueError(f"Unknown model: {model_name}")
+        def _mlp_factory():
+            return __import__("models.approximator", fromlist=["MLP"]).MLP(
+                hidden_dims=[32, 32, 32, 32], activation=nn.Tanh())
+        factory = _mlp_factory
 
     out = os.path.join(output_dir, f"curves_part_{worker_id:03d}.json")
     seed = base_seed + worker_id * 1000
@@ -122,7 +128,6 @@ def _worker(args_tuple):
         device=device,
         output_dir=output_dir,
         seed=seed,
-        quiet=True,
     )
 
     # Rename curves.json → part file
@@ -133,7 +138,8 @@ def _worker(args_tuple):
 
 
 def _run_parallel(func_names, budgets, factory, generated, n_func_per_class,
-                  split, device, output_dir, seed, n_workers):
+                  split, device, output_dir, seed, n_workers,
+                  model_name, model_factory_str):
     """Distribute function names across workers, merge results."""
     import copy
 
@@ -146,15 +152,6 @@ def _run_parallel(func_names, budgets, factory, generated, n_func_per_class,
         else:
             lib = FUNCTION_LIBRARY
         func_names = sorted(lib.keys())
-
-    # Detect model-factory string for subprocess reconstruction
-    model_name = "mlp"  # default, will be overridden
-    model_factory_str = None
-    if factory.__module__ and hasattr(factory, '__qualname__'):
-        model_factory_str = f"{factory.__module__}:{factory.__qualname__}"
-    else:
-        # Fallback: use built-in mlp
-        model_name = "mlp"
 
     # Split functions across workers
     chunks = np.array_split(func_names, n_workers)
@@ -191,6 +188,9 @@ def _run_parallel(func_names, budgets, factory, generated, n_func_per_class,
         json.dump(merged, f, indent=2)
     print(f"\n  Merged {len(merged)} functions → curves.json")
 
+    # Print summary table
+    _print_summary(merged, budgets)
+
 
 def parse_args() -> argparse.Namespace:
     p = argparse.ArgumentParser(
@@ -221,8 +221,36 @@ def parse_args() -> argparse.Namespace:
 
 
 # ---------------------------------------------------------------------------
-# Main
+# CLI
 # ---------------------------------------------------------------------------
+
+
+def _print_summary(data: dict, budgets: list) -> None:
+    """Print final L² errors at the largest budget."""
+    import numpy as np
+    functions = sorted(data.keys())
+    if not functions or not budgets:
+        return
+    last_budget = budgets[-1]
+    algs = sorted({a for fn in functions for a in data[fn]})
+    n_show = min(20, len(functions))
+    print(f"\n{'='*70}")
+    print(f"  Final L² errors at budget = {last_budget}")
+    print(f"{'='*70}")
+    header = f"{'Function':<30s}" + "".join(f"{a:>18s}" for a in algs)
+    print(header)
+    print("-" * len(header))
+    for fn in functions[:n_show]:
+        row = f"{fn:<30s}"
+        for an in algs:
+            errs = data[fn].get(an, {}).get("errors", [])
+            if errs and errs[-1] == errs[-1]:
+                row += f"{errs[-1]:>18.6f}"
+            else:
+                row += f"{'—':>18s}"
+        print(row)
+    if len(functions) > n_show:
+        print(f"  ... {len(functions) - n_show} more functions")
 
 
 def main() -> None:
@@ -271,6 +299,8 @@ def main() -> None:
             output_dir=args.output_dir,
             seed=args.seed,
             n_workers=args.workers,
+            model_name=args.model,
+            model_factory_str=args.model_factory,
         )
     else:
         run_experiment(
@@ -287,6 +317,9 @@ def main() -> None:
 
     curves_path = os.path.join(args.output_dir, "curves.json")
     print(f"\nRaw results saved → {os.path.abspath(curves_path)}")
+
+    with open(curves_path) as f:
+        _print_summary(json.load(f), budgets)
 
     # Generate chart data for the website
     chart_data_path = "docs/figures/charts_data.json"

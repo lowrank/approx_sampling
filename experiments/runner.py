@@ -31,8 +31,7 @@ from algorithms.diffusion import DiffusionSampling, ScoreNetwork1D
 from algorithms.importance_sampling import ImportanceSampling
 from algorithms.normalizing_flow import MonotonicFlow1D, NormalizingFlowSampling
 from algorithms.mdn import MDNSampler, MDNSampling
-from algorithms.svgd import SVGDSampling
-from algorithms.ensemble_gp import EnsembleSampling, GPUCBSampling
+from algorithms.gp_ucb import GPUCBSampling
 from algorithms.policy_sampler import PolicyNetwork, PolicySampling
 from algorithms.neural_process import NeuralProcessSampler, NeuralProcessSampling
 from algorithms.qmc import QMCSampling
@@ -153,20 +152,7 @@ def _build_algorithms(
         entropy_weight=0.02, device=device,
     )))
 
-    # --- Particle-based ---
-    algs.append(("svgd", SVGDSampling(
-        budget=budget, model=model_factory(),
-        n_particles=50, kernel_width=0.05, svgd_step_size=0.01,
-        svgd_steps_per_round=50, epochs_per_round=_epochs(TARGET // n_rounds_est),
-        lr=lr, batch_size=64, device=device,
-    )))
-
     # --- Uncertainty-based ---
-    algs.append(("ensemble", EnsembleSampling(
-        budget=budget, model=model_factory(),
-        n_members=5, batch_size=64,
-        epochs_per_round=_epochs(TARGET // 5), lr=lr, device=device,
-    )))
     algs.append(("gp_ucb", GPUCBSampling(
         budget=budget, model=model_factory(),
         batch_size=64, epochs_per_round=_epochs(), lr=lr, beta=2.0, device=device,

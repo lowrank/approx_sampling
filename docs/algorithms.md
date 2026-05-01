@@ -30,13 +30,8 @@ and an evaluation grid, they return an `AlgorithmResult`.
 
 - [Diffusion](algorithms/diffusion.md) — denoising score matching + Langevin dynamics.
 
-## Particle-Based
-
-- [SVGD](algorithms/svgd.md) — Stein Variational Gradient Descent.
-
 ## Uncertainty-Based
 
-- [Ensemble](algorithms/ensemble.md) — deep ensemble predictive variance.
 - [GP-UCB](algorithms/gp_ucb.md) — Gaussian Process Upper Confidence Bound.
 
 ## Policy / Meta

@@ -518,10 +518,19 @@ each spike.
 \begin{figure}[H]
   \centering
   \includegraphics[width=\textwidth]{figures/spike_bg_results.pdf}
-  \caption{Top: test function.  Bottom: $L^2$ error vs.\ budget for all
-           17 algorithms.  Learnable methods achieve errors 25$\times$ lower
-           than uniform/Chebyshev by concentrating samples in the two spikes.}
+  \caption{Top: test function.  Bottom: $L^2$ error vs.\ budget.}
   \label{fig:spike_bg}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{figures/spike_bg_residuals.pdf}
+  \caption{Pointwise residuals $f(x) - u_\theta(x)$ for each algorithm at
+           budget 192, sorted by $L^2$ error (best at top).  The two spike
+           regions at $x=0.3$ and $x=0.7$ are clearly visible in the
+           residuals of fixed-grid methods; learnable methods suppress them
+           almost completely.}
+  \label{fig:spike_bg_residuals}
 \end{figure}
 
 At budget 192 the best algorithms are MDN ($2.96\times10^{-3}$), policy

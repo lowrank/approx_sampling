@@ -2,42 +2,32 @@
 """
 Full experiment runner.
 
-For every function in the (hardcoded or generated) library, runs all 15+
-sampling algorithms at increasing budgets: 64, 128, 192, …, max_budget
-(step 64).
+For every function in the (hardcoded or generated) library, runs all 17
+sampling algorithms at increasing budgets starting from 64.
 
-QMC Sobol' is only evaluated at power-of-two budgets (64, 128, 256, 512, ...)
-— fewer data points on the error-vs-samples curve, but consistent with its
-theoretical balance requirements.
-
-Raw results are saved as ``results/curves.json`` (merged across runs).
+QMC Sobol' is only evaluated at power-of-two budgets.  Results saved as
+``results/curves.json``.
 
 Usage::
 
-    python scripts/run_full_experiment.py                        # default: 13 funcs, budgets up to 1024
+    python scripts/run_full_experiment.py                         # 13 hardcoded funcs
     python scripts/run_full_experiment.py --generated             # 600 generated funcs
-    python scripts/run_full_experiment.py --n-func-per-class 20  # 20 per class
-    python scripts/run_full_experiment.py --max-budget 2048      # up to 2048
-    python scripts/run_full_experiment.py --model mmnn           # MMNN architecture
-    python scripts/run_full_experiment.py --device cuda          # GPU
-    python scripts/run_full_experiment.py --only smooth_000,sharp_042  # specific funcs
+    python scripts/run_full_experiment.py --generated --split train
+    python scripts/run_full_experiment.py --model mmnn            # MMNN arch
+    python scripts/run_full_experiment.py --device cuda           # GPU
 """
 
 from __future__ import annotations
 
 import argparse
 import importlib
-import json
-import multiprocessing
 import os
 import sys
 from typing import Callable, List, Optional
 
-import numpy as np
 import torch
 import torch.nn as nn
 
-# Project root
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from experiments.runner import run_experiment
@@ -78,9 +68,6 @@ def _resolve_factory(model: str, mf: str | None) -> Callable[[], nn.Module]:
 
 
 def make_budgets(start: int = 64, max_budget: int = 196, step: int = 32) -> List[int]:
-    """Generate the budget schedule.
-
-    Default: 64, 96, 128, 160, 192."""
     budgets: List[int] = []
     b = start
     while b <= max_budget:
@@ -90,122 +77,24 @@ def make_budgets(start: int = 64, max_budget: int = 196, step: int = 32) -> List
 
 
 # ---------------------------------------------------------------------------
-# Parallel execution
+# CLI
 # ---------------------------------------------------------------------------
-
-
-def _worker(args_tuple):
-    """Run experiment on a subset of functions (called in a subprocess)."""
-    (func_names_subset, budgets, model_name, model_factory_str,
-     generated, n_func_per_class, split, device, output_dir, base_seed, worker_id) = args_tuple
-
-    # Rebuild model factory in subprocess
-    if model_factory_str:
-        parts = model_factory_str.split(":")
-        mod = importlib.import_module(parts[0])
-        factory = getattr(mod, parts[1])
-    elif model_name == "mmnn":
-        def _mmnn_factory():
-            return __import__("models.approximator", fromlist=["MMNN"]).MMNN(
-                input_size=1, rank=10, hidden_size=1000, seed=42 + worker_id)
-        factory = _mmnn_factory
-    else:
-        def _mlp_factory():
-            return __import__("models.approximator", fromlist=["MLP"]).MLP(
-                hidden_dims=[32, 32, 32, 32], activation=nn.Tanh())
-        factory = _mlp_factory
-
-    out = os.path.join(output_dir, f"curves_part_{worker_id:03d}.json")
-    seed = base_seed + worker_id * 1000
-
-    run_experiment(
-        function_names=func_names_subset,
-        budgets=budgets,
-        model_factory=factory,
-        generated=generated,
-        n_func_per_class=n_func_per_class,
-        split=split,
-        device=device,
-        output_dir=output_dir,
-        seed=seed,
-        quiet=True,
-    )
-
-    # Rename curves.json → part file
-    curves_path = os.path.join(output_dir, "curves.json")
-    if os.path.exists(curves_path):
-        os.rename(curves_path, out)
-    return worker_id
-
-
-def _run_parallel(func_names, budgets, factory, generated, n_func_per_class,
-                  split, device, output_dir, seed, n_workers,
-                  model_name, model_factory_str):
-    """Distribute function names across workers, merge results."""
-    import copy
-
-    # Resolve function list if not explicitly given
-    if func_names is None:
-        from data.function_library import FUNCTION_LIBRARY
-        if generated:
-            from data.function_generator import generate_function_library
-            lib = generate_function_library(n_per_class=n_func_per_class, seed=seed, split=split)
-        else:
-            lib = FUNCTION_LIBRARY
-        func_names = sorted(lib.keys())
-
-    # Split functions across workers
-    chunks = np.array_split(func_names, n_workers)
-    chunk_sizes = [len(c) for c in chunks]
-
-    print(f"  Splitting {len(func_names)} functions across {n_workers} workers:")
-    for i, sz in enumerate(chunk_sizes):
-        if sz > 0:
-            print(f"    worker {i}: {sz} functions")
-
-    args_list = []
-    for i, chunk in enumerate(chunks):
-        if len(chunk) == 0:
-            continue
-        args_list.append((
-            list(chunk), budgets, model_name, model_factory_str,
-            generated, n_func_per_class, split, device, output_dir, seed, i,
-        ))
-
-    with multiprocessing.Pool(processes=min(len(args_list), n_workers)) as pool:
-        for wid in pool.imap_unordered(_worker, args_list):
-            print(f"  [worker {wid}] finished")
-
-    # Merge part files into curves.json
-    merged = {}
-    for i in range(n_workers):
-        part_path = os.path.join(output_dir, f"curves_part_{i:03d}.json")
-        if os.path.exists(part_path):
-            with open(part_path, "r") as f:
-                merged.update(json.load(f))
-            os.remove(part_path)
-
-    with open(os.path.join(output_dir, "curves.json"), "w") as f:
-        json.dump(merged, f, indent=2)
-    print(f"\n  Merged {len(merged)} functions → curves.json")
-
-    # Print summary table
-    _print_summary(merged, budgets)
 
 
 def parse_args() -> argparse.Namespace:
     p = argparse.ArgumentParser(
-        description="Full experiment: all functions × all algorithms × progressive budgets."
+        description="Full experiment: all functions × 17 algorithms × progressive budgets."
     )
     p.add_argument("--func", type=str, default=None,
-                   help="Comma-separated function names (default: all in library).")
+                   help="Comma-separated function names (default: all).")
     p.add_argument("--max-budget", type=int, default=196,
                    help="Largest sampling budget (default: 196, step 32 → 64,96,128,160,192).")
     p.add_argument("--model", type=str, default="mlp",
                    help="Built-in model (mlp, mmnn).")
     p.add_argument("--model-factory", type=str, default=None,
                    help="Custom 'pkg.module:function'.")
-    p.add_argument("--device", type=str, default="auto", choices=["cpu", "cuda", "auto"],
+    p.add_argument("--device", type=str, default="auto",
+                   choices=["cpu", "cuda", "auto"],
                    help="PyTorch device (default: auto-detect CUDA).")
     p.add_argument("--output-dir", type=str, default="results")
     p.add_argument("--seed", type=int, default=42)
@@ -216,42 +105,12 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--split", type=str, default="all",
                    choices=["all", "train", "test"],
                    help="Use train (70%%), test (30%%), or all functions.")
-    p.add_argument("--workers", type=int, default=1,
-                   help="Number of parallel workers (default: 1 = sequential).")
     return p.parse_args()
 
 
 # ---------------------------------------------------------------------------
-# CLI
+# Main
 # ---------------------------------------------------------------------------
-
-
-def _print_summary(data: dict, budgets: list) -> None:
-    """Print final L² errors at the largest budget."""
-    import numpy as np
-    functions = sorted(data.keys())
-    if not functions or not budgets:
-        return
-    last_budget = budgets[-1]
-    algs = sorted({a for fn in functions for a in data[fn]})
-    n_show = min(20, len(functions))
-    print(f"\n{'='*70}")
-    print(f"  Final L² errors at budget = {last_budget}")
-    print(f"{'='*70}")
-    header = f"{'Function':<30s}" + "".join(f"{a:>18s}" for a in algs)
-    print(header)
-    print("-" * len(header))
-    for fn in functions[:n_show]:
-        row = f"{fn:<30s}"
-        for an in algs:
-            errs = data[fn].get(an, {}).get("errors", [])
-            if errs and errs[-1] == errs[-1]:
-                row += f"{errs[-1]:>18.6f}"
-            else:
-                row += f"{'—':>18s}"
-        print(row)
-    if len(functions) > n_show:
-        print(f"  ... {len(functions) - n_show} more functions")
 
 
 def main() -> None:
@@ -261,89 +120,57 @@ def main() -> None:
     if args.func is not None:
         funcs = [s.strip() for s in args.func.split(",") if s.strip()]
 
-    budgets = make_budgets(max_budget=args.max_budget, step=64)
+    budgets = make_budgets(max_budget=args.max_budget, step=32)
     factory = _resolve_factory(args.model, args.model_factory)
-
     device = args.device if args.device != "auto" else ("cuda" if torch.cuda.is_available() else "cpu")
 
-    n_pow2 = sum(1 for b in budgets if b > 0 and (b & (b - 1)) == 0)
-    n_nonpow2 = len(budgets) - n_pow2
     n_funcs = len(funcs) if funcs else (
         args.n_func_per_class * 3 if args.generated else 13
     )
-    # Approx total runs: (n_funcs) × (14 alg × all budgets + 1 alg × pow2 budgets)
-    n_algs_per_budget = 17  # all algorithms
-    n_algs_sobol = 1
-    total_runs = n_funcs * (n_algs_per_budget * len(budgets))
 
     print(f"{'='*70}")
     print(f"Full experiment")
     print(f"  Functions:     {n_funcs}")
-    print(f"  Budgets:       {len(budgets)} ({budgets[0]}…{budgets[-1]}, step 64)")
-    print(f"  Power-of-2:    {n_pow2} (Sobol only)")
-    print(f"  Algorithms:    {n_algs_per_budget} (17)")
-    print(f"  Total runs:    ~{total_runs}")
+    print(f"  Budgets:       {len(budgets)} ({budgets[0]}…{budgets[-1]}, step 32)")
+    print(f"  Algorithms:    17")
     print(f"  Device:        {device}")
-    print(f"  Workers:       {args.workers}")
     print(f"  Output:        {args.output_dir}")
     print(f"{'='*70}\n")
 
-    if args.workers > 1:
-        _run_parallel(
-            func_names=funcs,
-            budgets=budgets,
-            factory=factory,
-            generated=args.generated,
-            n_func_per_class=args.n_func_per_class,
-            split=args.split,
-            device=device,
-            output_dir=args.output_dir,
-            seed=args.seed,
-            n_workers=args.workers,
-            model_name=args.model,
-            model_factory_str=args.model_factory,
-        )
-    else:
-        run_experiment(
-            function_names=funcs,
-            budgets=budgets,
-            model_factory=factory,
-            generated=args.generated,
-            n_func_per_class=args.n_func_per_class,
-            split=args.split,
-            device=device,
-            output_dir=args.output_dir,
-            seed=args.seed,
-        )
+    run_experiment(
+        function_names=funcs,
+        budgets=budgets,
+        model_factory=factory,
+        generated=args.generated,
+        n_func_per_class=args.n_func_per_class,
+        split=args.split,
+        device=device,
+        output_dir=args.output_dir,
+        seed=args.seed,
+    )
 
     curves_path = os.path.join(args.output_dir, "curves.json")
-    print(f"\nRaw results saved → {os.path.abspath(curves_path)}")
-
-    with open(curves_path) as f:
-        _print_summary(json.load(f), budgets)
+    print(f"\nResults → {os.path.abspath(curves_path)}")
 
     # Generate chart data for the website
-    chart_data_path = "docs/figures/charts_data.json"
+    import json
     if os.path.exists(curves_path):
-        import json
         with open(curves_path) as f:
             data = json.load(f)
-        # Sample up to 3 per class for chart data (keep file small)
         sampled: dict = {}
         for cls in ("smooth", "oscillatory", "sharp"):
             fns = sorted([k for k in data if k.startswith(cls)])
             for fn in fns[:3]:
                 if fn in data:
                     sampled[fn] = data[fn]
-        # Also include hardcoded functions
         for fn in data:
             if not any(fn.startswith(p) for p in ("smooth_", "oscillatory_", "sharp_")):
                 sampled[fn] = data[fn]
+        chart_data_path = "docs/figures/charts_data.json"
         os.makedirs(os.path.dirname(chart_data_path), exist_ok=True)
         with open(chart_data_path, "w") as f:
             json.dump(sampled, f)
-        print(f"Chart data saved → {os.path.abspath(chart_data_path)}")
-        print("Run 'mkdocs build' to update the website.")
+        print(f"Chart data → {os.path.abspath(chart_data_path)}")
 
 
 if __name__ == "__main__":

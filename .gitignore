@@ -1,10 +1,6 @@
 __pycache__/
 *.pyc
 *.pyo
-results/
-results_train/
-results_test/
-site/
 latex/*.aux
 latex/*.log
 latex/*.out

@@ -128,6 +128,7 @@ def _worker(args_tuple):
         device=device,
         output_dir=output_dir,
         seed=seed,
+        quiet=True,
     )
 
     # Rename curves.json → part file

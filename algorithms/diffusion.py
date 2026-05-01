@@ -205,7 +205,7 @@ class DiffusionSampling(BaseSamplingAlgorithm):
             )
             alpha = self.langevin_step_size * (sigma / self.sigma_levels[-1]) ** 2
             for _ in range(self.langevin_steps):
-                x.requires_grad_(False)
+                x = x.detach()
                 score = self.score_net(x, log_sigma).squeeze(-1)
                 noise = torch.randn(n_samples, device=device)
                 x = x + alpha * score + math.sqrt(2.0 * alpha) * noise

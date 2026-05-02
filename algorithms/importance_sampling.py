@@ -129,6 +129,7 @@ class ImportanceSampling(BaseSamplingAlgorithm):
             buffer_y = torch.cat([b.to(self.device) for b in all_values])
             buffer_log_q = torch.cat([b.to(self.device) for b in all_log_q])
             n_buffer = buffer_x.shape[0]
+            w_buf = self._is_weights(buffer_x.cpu().numpy()).to(self.device)
 
             for _ in range(theta_steps_per_outer):
                 idx = torch.randperm(n_buffer, device=self.device)[:self.batch_size]
@@ -139,7 +140,7 @@ class ImportanceSampling(BaseSamplingAlgorithm):
                 w = w_raw / (w_raw.sum() + 1e-8) * self.batch_size
 
                 opt_theta.zero_grad()
-                is_loss = torch.mean(w * task.pointwise_loss(self.model, bx))
+                is_loss = torch.mean(w_buf[idx] * w * task.pointwise_loss(self.model, bx))
                 is_loss.backward()
                 opt_theta.step()
                 sched_theta.step()

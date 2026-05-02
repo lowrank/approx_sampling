@@ -319,12 +319,13 @@ class DiffusionSampling(BaseSamplingAlgorithm):
             buffer_x = torch.cat([b.to(self.device) for b in all_points])
             buffer_y = torch.cat([b.to(self.device) for b in all_values])
             n_buffer = buffer_x.shape[0]
+            w_buf = self._is_weights(buffer_x.cpu().numpy()).to(self.device)
 
             for _ in range(theta_steps_per_outer):
                 idx = torch.randperm(n_buffer, device=self.device)[:self.batch_size]
                 bx = buffer_x[idx]
                 opt_theta.zero_grad()
-                loss = torch.mean(task.pointwise_loss(self.model, bx))
+                loss = torch.mean(w_buf[idx] * task.pointwise_loss(self.model, bx))
                 loss.backward()
                 opt_theta.step()
                 sched_theta.step()

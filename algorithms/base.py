@@ -117,5 +117,20 @@ class BaseSamplingAlgorithm(ABC):
         self.model.train()
         return float(np.sqrt(trapezoid((y_true - y_pred) ** 2, eval_grid)))
 
+    @staticmethod
+    def _is_weights(x_np: np.ndarray, n_bins: int = 64) -> torch.Tensor:
+        """Importance weights: inverse empirical density (histogram-based).
+
+        Returns weights ~ 1/p(x) normalised to mean 1.  Points in sparse
+        regions get high weight; points in dense regions get low weight.
+        """
+        bins = np.linspace(0, 1, n_bins + 1)
+        counts, _ = np.histogram(x_np, bins=bins)
+        density = counts / (len(x_np) * (1.0 / n_bins)) + 1e-10
+        idx = np.clip(np.searchsorted(bins[1:], x_np, side="right"), 0, n_bins - 1)
+        w = 1.0 / density[idx]
+        w = w / w.mean()
+        return torch.from_numpy(w.astype(np.float32))
+
 
 

@@ -183,12 +183,13 @@ class MDNSampling(BaseSamplingAlgorithm):
             buf_x = torch.cat([b.to(self.device) for b in all_points])
             buf_y = torch.cat([b.to(self.device) for b in all_values])
             n_buf = buf_x.shape[0]
+            w_buf = self._is_weights(buf_x.cpu().numpy()).to(self.device)
 
             for _ in range(theta_steps_per_outer):
                 idx = torch.randperm(n_buf, device=self.device)[:self.batch_size]
                 bx = buf_x[idx]
                 opt_theta.zero_grad()
-                loss = torch.mean(task.pointwise_loss(self.model, bx))
+                loss = torch.mean(w_buf[idx] * task.pointwise_loss(self.model, bx))
                 loss.backward()
                 opt_theta.step()
                 sched_theta.step()

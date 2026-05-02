@@ -34,6 +34,7 @@ from algorithms.mdn import MDNSampler, MDNSampling
 from algorithms.policy_sampler import PolicyNetwork, PolicySampling
 from algorithms.neural_process import NeuralProcessSampler, NeuralProcessSampling
 from algorithms.trainable_points import TrainablePointsSampling
+from algorithms.density_network import DensityNetwork, DensityNetworkSampling
 from algorithms.qmc import QMCSampling
 from algorithms.uniform import UniformSampling
 from data.function_library import FUNCTION_LIBRARY
@@ -164,6 +165,14 @@ def _build_algorithms(
         budget=budget, model=model_factory(),
         batch_size=batch, n_rounds=20, theta_steps_per_round=2000,
         point_lr=0.02, merge_tol=0.005, lr_theta=lr, device=device,
+    )))
+
+    # --- Density network (positive density, reparam gradient) ---
+    algs.append(("density_network", DensityNetworkSampling(
+        budget=budget, model=model_factory(),
+        density_net=DensityNetwork(hidden_dim=64, n_layers=3, n_grid=2000),
+        batch_size=batch, total_theta_steps=TARGET, n_density_steps=30,
+        lr_theta=lr, lr_density=lr, entropy_weight=0.02, device=device,
     )))
 
     # --- Diffusion / score-matching ---

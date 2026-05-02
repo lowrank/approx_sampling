@@ -92,7 +92,7 @@ def generate_results_table() -> None:
         # Sort: adaptive_residual first (baseline), then alphabetical
         def _sort_key(a):
             return (0 if a == "adaptive_residual" else 1, a)
-        algs = sorted({a for f in functions for a in data[f]}, key=_sort_key)[:8]
+        algs = sorted({a for f in functions for a in data[f]}, key=_sort_key)[:6]
         col_spec = "l" + "c" * len(algs)
         lines.append(r"  \begin{tabular}{@{}" + col_spec + "@{}}")
         lines.append(r"    \toprule")

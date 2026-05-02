@@ -519,13 +519,18 @@ run for 12\,000 effective gradient steps with learning rate $1.5\times10^{-3}$.
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=\textwidth]{figures/spike_bg_MMNN.pdf}
-  \caption{MMNN (rank 15, width 1000) — pointwise mean residual $\pm 1\sigma$
-           over 20 random seeds.  Shaded bands show run-to-run variability;
-           averaged sampling-point histograms are in blue.  Learnable methods
-           (policy, importance sampling, diffusion, adversarial) outperform
-           fixed grids on average but with higher variance.}
-  \label{fig:spike_bg_mmnn}
+  \includegraphics[width=\textwidth]{figures/spike_bg_MMNN_g1.pdf}
+  \caption{MMNN (rank 15, width 1000) — mean residual $\pm 1\sigma$ over
+           20 random seeds, group 1/2 (best 6 algorithms).}
+  \label{fig:spike_bg_mmnn_g1}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{figures/spike_bg_MMNN_g2.pdf}
+  \caption{MMNN — group 2/2 (remaining 6 algorithms).  Learnable methods
+           outperform fixed grids on average but with higher variance.}
+  \label{fig:spike_bg_mmnn_g2}
 \end{figure}
 worse.  Adaptive residual ($7.1\times10^{-3}$) is competitive but 2--3$\times$
 behind the learnable methods that model the density with finer granularity.

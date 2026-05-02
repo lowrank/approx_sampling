@@ -3,19 +3,19 @@
   \caption{$L^2[0,1]$ error at the largest budget.}
   \label{tab:results}
   \small
-  \begin{tabular}{@{}lcccccccc@{}}
+  \begin{tabular}{@{}lcccccc@{}}
     \toprule
-    Function & \textbf{Adaptive Res. (baseline)} & \textbf{Adversarial} & \textbf{Chebyshev} & \textbf{Diffusion} & \textbf{Importance S.} & \textbf{QMC Halton} & \textbf{QMC Sobol} & \textbf{Uniform} \\
+    Function & \textbf{Adaptive Res. (baseline)} & \textbf{Adversarial} & \textbf{Chebyshev} & \textbf{Diffusion} & \textbf{Importance S.} & \textbf{QMC Halton} \\
     \midrule
-    smooth\_exp & 0.0077 & 0.0063 & 0.0042 & 0.0031 & $\mathbf{0.0011}$ & 0.0120 & 0.0066 & 0.0044 \\
-    smooth\_poly & 0.0084 & 0.0080 & 0.0039 & 0.0078 & 0.0085 & 0.0140 & 0.0213 & $\mathbf{0.0027}$ \\
-    smooth\_sinusoid & 0.0071 & 0.0048 & 0.0053 & 0.0034 & $\mathbf{0.0010}$ & 0.0117 & 0.0140 & 0.0065 \\
-    oscillatory\_chirp & $\mathbf{0.0014}$ & 0.0104 & 0.0084 & 0.0107 & 0.0044 & 0.0213 & 0.0082 & 0.0095 \\
-    oscillatory\_high\_freq & $\mathbf{0.0015}$ & 0.0027 & 0.0053 & 0.0017 & 0.0080 & 0.0037 & 0.0117 & 0.0082 \\
-    boundary\_layer & $\mathbf{0.0013}$ & 0.0031 & 0.0069 & 0.0087 & 0.0110 & 0.0106 & 0.0185 & 0.0057 \\
-    cusp & 0.0073 & 0.0048 & 0.0100 & $\mathbf{0.0027}$ & 0.0070 & 0.0066 & 0.0049 & 0.0109 \\
-    local\_discontinuity & 0.0080 & 0.0047 & 0.0052 & $\mathbf{0.0013}$ & 0.0015 & 0.0197 & 0.0153 & 0.0102 \\
-    local\_gaussians & 0.0043 & 0.0035 & 0.0061 & $\mathbf{0.0029}$ & 0.0084 & 0.0091 & 0.0129 & 0.0042 \\
+    smooth\_exp & 0.0077 & 0.0063 & 0.0042 & 0.0031 & $\mathbf{0.0011}$ & 0.0120 \\
+    smooth\_poly & 0.0084 & 0.0080 & $\mathbf{0.0039}$ & 0.0078 & 0.0085 & 0.0140 \\
+    smooth\_sinusoid & 0.0071 & 0.0048 & 0.0053 & 0.0034 & $\mathbf{0.0010}$ & 0.0117 \\
+    oscillatory\_chirp & $\mathbf{0.0014}$ & 0.0104 & 0.0084 & 0.0107 & 0.0044 & 0.0213 \\
+    oscillatory\_high\_freq & $\mathbf{0.0015}$ & 0.0027 & 0.0053 & 0.0017 & 0.0080 & 0.0037 \\
+    boundary\_layer & $\mathbf{0.0013}$ & 0.0031 & 0.0069 & 0.0087 & 0.0110 & 0.0106 \\
+    cusp & 0.0073 & 0.0048 & 0.0100 & $\mathbf{0.0027}$ & 0.0070 & 0.0066 \\
+    local\_discontinuity & 0.0080 & 0.0047 & 0.0052 & $\mathbf{0.0013}$ & 0.0015 & 0.0197 \\
+    local\_gaussians & 0.0043 & 0.0035 & 0.0061 & $\mathbf{0.0029}$ & 0.0084 & 0.0091 \\
     \bottomrule
   \end{tabular}
 \end{table}
@@ -23,12 +23,12 @@
   \centering
   \caption{Smooth functions — mean $L^2$ error at largest budget (3 functions).}
   \small
-  \begin{tabular}{@{}lcccccccc@{}}
+  \begin{tabular}{@{}lcccccc@{}}
     \toprule
-    Algorithm & \textbf{Adaptive Res. (baseline)} & \textbf{Adversarial} & \textbf{Chebyshev} & \textbf{Diffusion} & \textbf{Importance S.} & \textbf{QMC Halton} & \textbf{QMC Sobol} & \textbf{Uniform} \\
+    Algorithm & \textbf{Adaptive Res. (baseline)} & \textbf{Adversarial} & \textbf{Chebyshev} & \textbf{Diffusion} & \textbf{Importance S.} & \textbf{QMC Halton} \\
     \midrule
-    Mean & 0.0077 & 0.0064 & 0.0044 & 0.0048 & 0.0036 & 0.0126 & 0.0140 & 0.0045 \\
-    Std & $\pm$0.0006 & $\pm$0.0013 & $\pm$0.0006 & $\pm$0.0021 & $\pm$0.0035 & $\pm$0.0010 & $\pm$0.0060 & $\pm$0.0015 \\
+    Mean & 0.0077 & 0.0064 & 0.0044 & 0.0048 & 0.0036 & 0.0126 \\
+    Std & $\pm$0.0006 & $\pm$0.0013 & $\pm$0.0006 & $\pm$0.0021 & $\pm$0.0035 & $\pm$0.0010 \\
     \bottomrule
   \end{tabular}
 \end{table}
@@ -36,12 +36,12 @@
   \centering
   \caption{Oscillatory functions — mean $L^2$ error at largest budget (2 functions).}
   \small
-  \begin{tabular}{@{}lcccccccc@{}}
+  \begin{tabular}{@{}lcccccc@{}}
     \toprule
-    Algorithm & \textbf{Adaptive Res. (baseline)} & \textbf{Adversarial} & \textbf{Chebyshev} & \textbf{Diffusion} & \textbf{Importance S.} & \textbf{QMC Halton} & \textbf{QMC Sobol} & \textbf{Uniform} \\
+    Algorithm & \textbf{Adaptive Res. (baseline)} & \textbf{Adversarial} & \textbf{Chebyshev} & \textbf{Diffusion} & \textbf{Importance S.} & \textbf{QMC Halton} \\
     \midrule
-    Mean & 0.0014 & 0.0065 & 0.0068 & 0.0062 & 0.0062 & 0.0125 & 0.0100 & 0.0089 \\
-    Std & $\pm$0.0001 & $\pm$0.0039 & $\pm$0.0016 & $\pm$0.0045 & $\pm$0.0018 & $\pm$0.0088 & $\pm$0.0017 & $\pm$0.0006 \\
+    Mean & 0.0014 & 0.0065 & 0.0068 & 0.0062 & 0.0062 & 0.0125 \\
+    Std & $\pm$0.0001 & $\pm$0.0039 & $\pm$0.0016 & $\pm$0.0045 & $\pm$0.0018 & $\pm$0.0088 \\
     \bottomrule
   \end{tabular}
 \end{table}
@@ -49,12 +49,12 @@
   \centering
   \caption{Hardcoded functions — mean $L^2$ error at largest budget (8 functions).}
   \small
-  \begin{tabular}{@{}lcccccccc@{}}
+  \begin{tabular}{@{}lcccccc@{}}
     \toprule
-    Algorithm & \textbf{Adaptive Res. (baseline)} & \textbf{Adversarial} & \textbf{Chebyshev} & \textbf{Diffusion} & \textbf{Importance S.} & \textbf{QMC Halton} & \textbf{QMC Sobol} & \textbf{Uniform} \\
+    Algorithm & \textbf{Adaptive Res. (baseline)} & \textbf{Adversarial} & \textbf{Chebyshev} & \textbf{Diffusion} & \textbf{Importance S.} & \textbf{QMC Halton} \\
     \midrule
-    Mean & 0.0057 & 0.0066 & 0.0073 & 0.0045 & 0.0068 & 0.0130 & 0.0129 & 0.0070 \\
-    Std & $\pm$0.0023 & $\pm$0.0029 & $\pm$0.0023 & $\pm$0.0032 & $\pm$0.0034 & $\pm$0.0053 & $\pm$0.0046 & $\pm$0.0031 \\
+    Mean & 0.0057 & 0.0066 & 0.0073 & 0.0045 & 0.0068 & 0.0130 \\
+    Std & $\pm$0.0023 & $\pm$0.0029 & $\pm$0.0023 & $\pm$0.0032 & $\pm$0.0034 & $\pm$0.0053 \\
     \bottomrule
   \end{tabular}
 \end{table}

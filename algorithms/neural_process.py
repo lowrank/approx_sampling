@@ -271,9 +271,7 @@ class NeuralProcessSampling(BaseSamplingAlgorithm):
 
         opt_theta = torch.optim.Adam(self.model.parameters(), lr=self.lr_theta)
         opt_np = torch.optim.Adam(self.np.parameters(), lr=self.lr_np)
-        sched_theta = torch.optim.lr_scheduler.CosineAnnealingLR(
-            opt_theta, T_max=self.total_theta_steps
-        )
+        WARMUP, DECAY = 10, 0.999
 
         l2_history: list[float] = []
         all_points: list[np.ndarray] = []
@@ -282,6 +280,7 @@ class NeuralProcessSampling(BaseSamplingAlgorithm):
         self.model.train()
         self.np.train()
         log_freq = max(1, n_outer // 10)
+        step_counter = 0
 
         for outer in range(n_outer):
             # ---- 1. Build context from history ----
@@ -322,7 +321,10 @@ class NeuralProcessSampling(BaseSamplingAlgorithm):
                 loss = torch.mean(w_buf[idx] * task.pointwise_loss(self.model, bx))
                 loss.backward()
                 opt_theta.step()
-                sched_theta.step()
+                if step_counter >= WARMUP:
+                    for g in opt_theta.param_groups:
+                        g["lr"] = self.lr_theta * (DECAY ** (step_counter - WARMUP))
+                step_counter += 1
 
             # ---- 4. Train NP via REINFORCE + reparam ----
             if ctx.shape[0] >= self.initial_random:

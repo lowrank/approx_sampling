@@ -65,7 +65,7 @@ def _build_algorithms(
     model_factory: Callable[[], nn.Module],
     device: str,
     skip_power_of_two: bool = False,
-    lr: float = 3e-4,
+    lr: float = 3e-3,
 ) -> List[Tuple[str, Any]]:
     """Return list of (name, algorithm_instance) for a given *budget*.
 
@@ -186,7 +186,7 @@ def run_experiment(
     device: str = "cpu",
     output_dir: str = "results",
     seed: int = 42,
-    lr: float = 3e-4,
+    lr: float = 3e-3,
 ) -> Dict[str, Any]:
     """Run multi-budget evaluation.
 

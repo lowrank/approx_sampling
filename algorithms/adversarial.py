@@ -92,9 +92,7 @@ class AdversarialSampling(BaseSamplingAlgorithm):
 
         opt_theta = torch.optim.Adam(self.model.parameters(), lr=self.lr_theta)
         opt_phi = torch.optim.Adam(self.generator.parameters(), lr=self.lr_phi)
-        sched_theta = torch.optim.lr_scheduler.CosineAnnealingLR(
-            opt_theta, T_max=self.total_theta_steps
-        )
+        WARMUP, DECAY = 10, 0.999
 
         baseline = 0.0
         l2_history: list[float] = []
@@ -134,7 +132,9 @@ class AdversarialSampling(BaseSamplingAlgorithm):
                 loss = torch.mean(w_buf[idx] * task.pointwise_loss(self.model, bx))
                 loss.backward()
                 opt_theta.step()
-                sched_theta.step()
+                if step_counter >= WARMUP:
+                    for g in opt_theta.param_groups:
+                        g["lr"] = self.lr_theta * (DECAY ** (step_counter - WARMUP))
                 step_counter += 1
 
             # ---- 3. Evaluate losses on current batch for φ update ----

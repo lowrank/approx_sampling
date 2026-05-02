@@ -290,9 +290,7 @@ class DiffusionSampling(BaseSamplingAlgorithm):
 
         opt_theta = torch.optim.Adam(self.model.parameters(), lr=self.lr_theta)
         opt_score = torch.optim.Adam(self.score_net.parameters(), lr=self.lr_score)
-        sched_theta = torch.optim.lr_scheduler.CosineAnnealingLR(
-            opt_theta, T_max=self.total_theta_steps
-        )
+        WARMUP, DECAY = 10, 0.999
 
         l2_history: list[float] = []
         all_points: list[torch.Tensor] = []
@@ -328,7 +326,9 @@ class DiffusionSampling(BaseSamplingAlgorithm):
                 loss = torch.mean(w_buf[idx] * task.pointwise_loss(self.model, bx))
                 loss.backward()
                 opt_theta.step()
-                sched_theta.step()
+                if step_counter >= WARMUP:
+                    for g in opt_theta.param_groups:
+                        g["lr"] = self.lr_theta * (DECAY ** (step_counter - WARMUP))
                 step_counter += 1
 
             # ---- 3. Compute error weights for score-model training ----

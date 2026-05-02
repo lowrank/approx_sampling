@@ -147,9 +147,7 @@ class PolicySampling(BaseSamplingAlgorithm):
 
         opt_theta = torch.optim.Adam(self.model.parameters(), lr=self.lr_theta)
         opt_policy = torch.optim.Adam(self.policy.parameters(), lr=self.lr_policy)
-        sched_theta = torch.optim.lr_scheduler.CosineAnnealingLR(
-            opt_theta, T_max=self.total_theta_steps
-        )
+        WARMUP, DECAY = 10, 0.999
 
         l2_history: list[float] = []
         all_points: list[np.ndarray] = []
@@ -158,6 +156,7 @@ class PolicySampling(BaseSamplingAlgorithm):
         self.model.train()
         self.policy.train()
         log_freq = max(1, n_outer // 10)
+        step_counter = 0
         baseline_r = 0.0
         gamma = 0.9
 
@@ -199,7 +198,10 @@ class PolicySampling(BaseSamplingAlgorithm):
                 loss = torch.mean(w_buf[idx] * task.pointwise_loss(self.model, bx))
                 loss.backward()
                 opt_theta.step()
-                sched_theta.step()
+                if step_counter >= WARMUP:
+                    for g in opt_theta.param_groups:
+                        g["lr"] = self.lr_theta * (DECAY ** (step_counter - WARMUP))
+                step_counter += 1
 
             # ---- 4. Compute reward (negative L² error improvement) ----
             err_before = l2_history[-1] if l2_history else 10.0

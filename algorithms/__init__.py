@@ -11,7 +11,6 @@ from algorithms.mdn import MDNSampling
 from algorithms.iterative_refinement import IterativeRefinementSampling
 from algorithms.policy_sampler import PolicySampling
 from algorithms.neural_process import NeuralProcessSampling
-from algorithms.gp_ucb import GPUCBSampling
 
 __all__ = [
     "AlgorithmResult", "BaseSamplingAlgorithm",
@@ -19,5 +18,5 @@ __all__ = [
     "AdaptiveResidualSampling", "IterativeRefinementSampling",
     "AdversarialSampling", "ImportanceSampling",
     "NormalizingFlowSampling", "MDNSampling", "DiffusionSampling",
-    "GPUCBSampling", "PolicySampling", "NeuralProcessSampling",
+    "PolicySampling", "NeuralProcessSampling",
 ]

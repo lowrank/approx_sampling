@@ -31,7 +31,6 @@ from algorithms.diffusion import DiffusionSampling, ScoreNetwork1D
 from algorithms.importance_sampling import ImportanceSampling
 from algorithms.normalizing_flow import MonotonicFlow1D, NormalizingFlowSampling
 from algorithms.mdn import MDNSampler, MDNSampling
-from algorithms.gp_ucb import GPUCBSampling
 from algorithms.policy_sampler import PolicyNetwork, PolicySampling
 from algorithms.neural_process import NeuralProcessSampler, NeuralProcessSampling
 from algorithms.qmc import QMCSampling
@@ -74,7 +73,7 @@ def _build_algorithms(
     power-of-two budgets (currently ``qmc_sobol``) are omitted.
     """
     algs: List[Tuple[str, Any]] = []
-    TARGET = 1500  # target gradient steps for all methods
+    TARGET = 12000  # target gradient steps for all methods
     batch = 64
     n_rounds_est = max(1, budget // batch)  # ~ outer iterations
     batches_per_epoch = max(1, budget // batch)
@@ -108,18 +107,6 @@ def _build_algorithms(
         batch_size=64, lr=lr, device=device,
     )))
 
-    # --- Iterative refinement meta-methods ---
-    algs.append(("iter_uniform", IterativeRefinementSampling(
-        budget=budget, model=model_factory(),
-        base_sampler_name="uniform", init_frac=0.4, candidate_size=2000,
-        final_epochs=_epochs(), lr=lr, batch_size=64, device=device,
-    )))
-    algs.append(("iter_chebyshev", IterativeRefinementSampling(
-        budget=budget, model=model_factory(),
-        base_sampler_name="chebyshev", init_frac=0.4, candidate_size=2000,
-        final_epochs=_epochs(), lr=lr, batch_size=64, device=device,
-    )))
-
     # --- Learnable: REINFORCE-based ---
     algs.append(("adversarial", AdversarialSampling(
         budget=budget, model=model_factory(),
@@ -150,12 +137,6 @@ def _build_algorithms(
         batch_size=64, total_theta_steps=8000, n_mdn_steps_per_outer=30,
         lr_theta=1e-3, lr_mdn=1e-3,
         entropy_weight=0.02, device=device,
-    )))
-
-    # --- Uncertainty-based ---
-    algs.append(("gp_ucb", GPUCBSampling(
-        budget=budget, model=model_factory(),
-        batch_size=64, epochs_per_round=_epochs(), lr=lr, beta=2.0, device=device,
     )))
 
     # --- Policy ---

@@ -91,16 +91,14 @@
 \newlabel{fig:conv}{{4}{9}{Convergence curves for selected functions. Dashed lines indicate $O(N^{-1/2})$ (MC) and $O(N^{-1})$ (QMC) reference slopes}{figure.caption.12}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {4.2}Sampling-point distributions}{9}{subsection.4.2}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {4.3}Case study: sharp spikes on smooth background}{9}{subsection.4.3}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces MMNN (rank 15, width 1000) — pointwise residuals and sampling histograms at budget 128.}}{11}{figure.caption.13}\protected@file@percent }
-\newlabel{fig:spike_bg_mmnn}{{5}{11}{MMNN (rank 15, width 1000) — pointwise residuals and sampling histograms at budget 128}{figure.caption.13}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces MLP ($[32,32,32,32]$, $\tanh $) — pointwise residuals and sampling histograms at budget 128.}}{12}{figure.caption.14}\protected@file@percent }
-\newlabel{fig:spike_bg_mlp}{{6}{12}{MLP ($[32,32,32,32]$, $\tanh $) — pointwise residuals and sampling histograms at budget 128}{figure.caption.14}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {5}Discussion}{13}{section.5}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.1}Fixed grids: when structure matches sampling}{13}{subsection.5.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.2}Generative methods: learning where to sample}{13}{subsection.5.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.3}SVGD: function evaluations as dynamics}{13}{subsection.5.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.4}Uncertainty vs.\ error: different objectives}{13}{subsection.5.4}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.5}Policy methods: end-to-end meta-learning}{13}{subsection.5.5}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces MMNN (rank 15, width 1000) — pointwise mean residual $\pm 1\sigma $ over 20 random seeds. Shaded bands show run-to-run variability; averaged sampling-point histograms are in blue. Learnable methods (policy, importance sampling, diffusion, adversarial) outperform fixed grids on average but with higher variance.}}{11}{figure.caption.13}\protected@file@percent }
+\newlabel{fig:spike_bg_mmnn}{{5}{11}{MMNN (rank 15, width 1000) — pointwise mean residual $\pm 1\sigma $ over 20 random seeds. Shaded bands show run-to-run variability; averaged sampling-point histograms are in blue. Learnable methods (policy, importance sampling, diffusion, adversarial) outperform fixed grids on average but with higher variance}{figure.caption.13}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {5}Discussion}{12}{section.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.1}Fixed grids: when structure matches sampling}{12}{subsection.5.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.2}Generative methods: learning where to sample}{12}{subsection.5.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.3}SVGD: function evaluations as dynamics}{12}{subsection.5.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.4}Uncertainty vs.\ error: different objectives}{12}{subsection.5.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.5}Policy methods: end-to-end meta-learning}{12}{subsection.5.5}\protected@file@percent }
 \bibstyle{plainnat}
 \bibcite{bhatnagar2009natural}{{1}{}{{}}{{}}}
 \bibcite{binev2011convergence}{{2}{}{{}}{{}}}
@@ -115,7 +113,7 @@
 \bibcite{liu2016stein}{{11}{}{{}}{{}}}
 \bibcite{liu2017stein}{{12}{}{{}}{{}}}
 \bibcite{maddison2016concrete}{{13}{}{{}}{{}}}
-\@writefile{toc}{\contentsline {section}{\numberline {6}Conclusion}{14}{section.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {6}Conclusion}{13}{section.6}\protected@file@percent }
 \bibcite{mclachlan2019finite}{{14}{}{{}}{{}}}
 \bibcite{mnih2016asynchronous}{{15}{}{{}}{{}}}
 \bibcite{niederreiter1992random}{{16}{}{{}}{{}}}
@@ -129,4 +127,4 @@
 \bibcite{williams1992simple}{{24}{}{{}}{{}}}
 \bibcite{xu2019understanding}{{25}{}{{}}{{}}}
 \providecommand\NAT@force@numbers{}\NAT@force@numbers
-\gdef \@abspage@last{15}
+\gdef \@abspage@last{14}

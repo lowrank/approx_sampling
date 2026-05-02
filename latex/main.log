@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2024.12.18)  1 MAY 2026 20:06
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2024.12.18)  1 MAY 2026 21:52
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -615,36 +615,26 @@ m/it/10.95 ; \OT1/cmr/m/n/10.95 32\OML/cmm/m/it/10.95 ; \OT1/cmr/m/n/10.95 32]$
 ,
  []
 
-<figures/spike_bg_MMNN.pdf, id=509, 715.27602pt x 1494.34789pt>
+<figures/spike_bg_MMNN.pdf, id=509, 715.22708pt x 1494.34789pt>
 File: figures/spike_bg_MMNN.pdf Graphic file (type pdf)
 <use figures/spike_bg_MMNN.pdf>
 Package pdftex.def Info: figures/spike_bg_MMNN.pdf  used on input line 522.
-(pdftex.def)             Requested size: 466.62503pt x 974.89453pt.
+(pdftex.def)             Requested size: 466.62503pt x 974.94014pt.
 [10]
-Overfull \vbox (297.93053pt too high) has occurred while \output is active []
+Overfull \vbox (325.17615pt too high) has occurred while \output is active []
 
 
 [11 <./figures/spike_bg_MMNN.pdf>]
-<figures/spike_bg_MLP.pdf, id=580, 716.21826pt x 1494.34789pt>
-File: figures/spike_bg_MLP.pdf Graphic file (type pdf)
-<use figures/spike_bg_MLP.pdf>
-Package pdftex.def Info: figures/spike_bg_MLP.pdf  used on input line 530.
-(pdftex.def)             Requested size: 466.62503pt x 973.61763pt.
-
-Overfull \vbox (296.65363pt too high) has occurred while \output is active []
-
-
-[12 <./figures/spike_bg_MLP.pdf>]
-Overfull \hbox (5.34418pt too wide) in paragraph at lines 558--561
+Overfull \hbox (5.34418pt too wide) in paragraph at lines 553--556
 []\OT1/cmr/bx/n/10.95 REINFORCE \OT1/cmr/m/n/10.95 (ad-ver-sar-ial, im-por-tanc
 e sam-pling): con-sis-tent but high-variance; the moving-
  []
 
-[13] [14]
+[12] [13]
 
 Package natbib Warning: There were undefined citations.
 
-[15] (./main.aux)
+[14] (./main.aux)
  ***********
 LaTeX2e <2023-11-01> patch level 1
 L3 programming layer <2024-01-22>
@@ -653,10 +643,10 @@ Package rerunfilecheck Info: File `main.out' has not changed.
 (rerunfilecheck)             Checksum: E6919A0BDA039D703B80FD0281E62576;6582.
  ) 
 Here is how much of TeX's memory you used:
- 13211 strings out of 474222
- 206247 string characters out of 5748732
+ 13201 strings out of 474222
+ 205965 string characters out of 5748732
  1951975 words of memory out of 5000000
- 35187 multiletter control sequences out of 15000+600000
+ 35179 multiletter control sequences out of 15000+600000
  571130 words of font info for 86 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  75i,12n,79p,541b,598s stack positions out of 10000i,1000n,20000p,200000b,200000s
@@ -678,10 +668,10 @@ exmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb></usr/share/texlive/texmf-d
 ist/fonts/type1/public/amsfonts/cm/cmtt10.pfb></usr/share/texlive/texmf-dist/fo
 nts/type1/public/amsfonts/symbols/msbm10.pfb></usr/share/texmf/fonts/type1/publ
 ic/cm-super/sfrm1095.pfb>
-Output written on main.pdf (15 pages, 1983132 bytes).
+Output written on main.pdf (14 pages, 1355563 bytes).
 PDF statistics:
- 770 PDF objects out of 1000 (max. 8388607)
- 382 compressed objects within 4 object streams
- 106 named destinations out of 1000 (max. 500000)
- 287 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 706 PDF objects out of 1000 (max. 8388607)
+ 373 compressed objects within 4 object streams
+ 104 named destinations out of 1000 (max. 500000)
+ 282 words of extra memory for PDF output out of 10000 (max. 10000000)
 

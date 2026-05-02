@@ -71,8 +71,83 @@ class MLP(nn.Module):
         return sum(p.numel() for p in self.parameters() if p.requires_grad)
 
 
+class DeepMMNN(nn.Module):
+    """Deep MMNN with 6 alternating frozen/trainable layers.
+
+    fc1: 1→H (frozen) + sin
+    fc2: H→R (trainable)
+    fc3: R→H (frozen) + sin
+    fc4: H→R (trainable)
+    fc5: R→H (frozen) + sin
+    fc6: H→1 (trainable)
+
+    Parameters
+    ----------
+    hidden_size : int
+    rank : int
+    seed : int
+    """
+
+    def __init__(
+        self,
+        input_size: int = 1,
+        rank: int = 15,
+        hidden_size: int = 1000,
+        seed: int = 42,
+    ) -> None:
+        super().__init__()
+        g = torch.Generator(); g.manual_seed(seed)
+
+        # fc1: input → hidden (frozen)
+        self.fc1 = nn.Linear(input_size, hidden_size)
+        nn.init.normal_(self.fc1.weight, std=1.0, generator=g)
+        nn.init.zeros_(self.fc1.bias)
+        self.fc1.weight.requires_grad_(False); self.fc1.bias.requires_grad_(False)
+
+        # fc2: hidden → rank (trainable)
+        self.fc2 = nn.Linear(hidden_size, rank)
+
+        # fc3: rank → hidden (frozen)
+        self.fc3 = nn.Linear(rank, hidden_size)
+        nn.init.normal_(self.fc3.weight, std=1.0, generator=g)
+        nn.init.zeros_(self.fc3.bias)
+        self.fc3.weight.requires_grad_(False); self.fc3.bias.requires_grad_(False)
+
+        # fc4: hidden → rank (trainable)
+        self.fc4 = nn.Linear(hidden_size, rank)
+
+        # fc5: rank → hidden (frozen)
+        self.fc5 = nn.Linear(rank, hidden_size)
+        nn.init.normal_(self.fc5.weight, std=1.0, generator=g)
+        nn.init.zeros_(self.fc5.bias)
+        self.fc5.weight.requires_grad_(False); self.fc5.bias.requires_grad_(False)
+
+        # fc6: hidden → 1 (trainable)
+        self.fc6 = nn.Linear(hidden_size, 1)
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        if x.dim() == 1: x = x.unsqueeze(-1)
+        x = torch.sin(self.fc1(x))
+        x = self.fc2(x)
+        x = torch.sin(self.fc3(x))
+        x = self.fc4(x)
+        x = torch.sin(self.fc5(x))
+        return self.fc6(x)
+
+    def predict_numpy(self, x: np.ndarray) -> np.ndarray:
+        self.eval()
+        with torch.no_grad():
+            t = torch.from_numpy(x.astype(np.float32))
+            out = self.forward(t).squeeze(-1).cpu().numpy()
+        self.train()
+        return out
+
+    def num_parameters(self) -> int:
+        return sum(p.numel() for p in self.parameters() if p.requires_grad)
+
+
 # ======================================================================
-# MMNN — Matrix-Matrix Neural Network
+# MMNN — 4-layer version
 # ======================================================================
 
 

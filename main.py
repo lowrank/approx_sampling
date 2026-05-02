@@ -38,8 +38,8 @@ _BUILTIN["mlp"] = lambda: __import__(
 ).MLP(hidden_dims=[32, 32, 32, 32], activation=nn.Tanh())
 
 _BUILTIN["mmnn"] = lambda: __import__(
-    "models.approximator", fromlist=["MMNN"]
-).MMNN(input_size=1, rank=15, hidden_size=4000, seed=42)
+    "models.approximator", fromlist=["DeepMMNN"]
+).DeepMMNN(input_size=1, rank=15, hidden_size=1000, seed=42)
 
 
 def _resolve_factory(model: str, mf: str | None) -> Callable[[], nn.Module]:

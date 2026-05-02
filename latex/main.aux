@@ -91,30 +91,17 @@
 \newlabel{fig:conv}{{4}{9}{Convergence curves for selected functions. Dashed lines indicate $O(N^{-1/2})$ (MC) and $O(N^{-1})$ (QMC) reference slopes}{figure.caption.12}{}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {4.2}Sampling-point distributions}{9}{subsection.4.2}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {4.3}Case study: sharp spikes on smooth background}{9}{subsection.4.3}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces Top: test function. Bottom: $L^2$ error vs.\ budget.}}{10}{figure.caption.13}\protected@file@percent }
-\newlabel{fig:spike_bg}{{5}{10}{Top: test function. Bottom: $L^2$ error vs.\ budget}{figure.caption.13}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {5}{\ignorespaces $L^2$ errors at budget 192 on the spike+bg function.}}{10}{table.caption.14}\protected@file@percent }
-\newlabel{tab:spike_bg}{{5}{10}{$L^2$ errors at budget 192 on the spike+bg function}{table.caption.14}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces Residuals (group 1/5): best 3 algorithms.}}{11}{figure.caption.15}\protected@file@percent }
-\newlabel{fig:spike_bg_residuals_g1}{{6}{11}{Residuals (group 1/5): best 3 algorithms}{figure.caption.15}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {7}{\ignorespaces Residuals (group 2/5).}}{12}{figure.caption.16}\protected@file@percent }
-\newlabel{fig:spike_bg_residuals_g2}{{7}{12}{Residuals (group 2/5)}{figure.caption.16}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {8}{\ignorespaces Residuals (group 3/5).}}{13}{figure.caption.17}\protected@file@percent }
-\newlabel{fig:spike_bg_residuals_g3}{{8}{13}{Residuals (group 3/5)}{figure.caption.17}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {9}{\ignorespaces Residuals (group 4/5).}}{14}{figure.caption.18}\protected@file@percent }
-\newlabel{fig:spike_bg_residuals_g4}{{9}{14}{Residuals (group 4/5)}{figure.caption.18}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {10}{\ignorespaces Residuals (group 5/5): worst 3 algorithms. Note the larger $y$-axis scale — the spike regions dominate.}}{15}{figure.caption.19}\protected@file@percent }
-\newlabel{fig:spike_bg_residuals}{{10}{15}{Residuals (group 5/5): worst 3 algorithms. Note the larger $y$-axis scale — the spike regions dominate}{figure.caption.19}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {5}Discussion}{15}{section.5}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.1}Fixed grids: when structure matches sampling}{15}{subsection.5.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.2}Generative methods: learning where to sample}{15}{subsection.5.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces Pointwise residuals $f(x)-u_\theta (x)$ and sampling-point histograms at budget 128. Top section: MMNN. Bottom section: MLP. Within each section algorithms are sorted by $L^2$ error. Blue/orange histograms show where each method allocated its 128 samples.}}{11}{figure.caption.13}\protected@file@percent }
+\newlabel{fig:spike_bg_residuals}{{5}{11}{Pointwise residuals $f(x)-u_\theta (x)$ and sampling-point histograms at budget 128. Top section: MMNN. Bottom section: MLP. Within each section algorithms are sorted by $L^2$ error. Blue/orange histograms show where each method allocated its 128 samples}{figure.caption.13}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {5}Discussion}{12}{section.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.1}Fixed grids: when structure matches sampling}{12}{subsection.5.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.2}Generative methods: learning where to sample}{12}{subsection.5.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.3}SVGD: function evaluations as dynamics}{12}{subsection.5.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.4}Uncertainty vs.\ error: different objectives}{12}{subsection.5.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.5}Policy methods: end-to-end meta-learning}{12}{subsection.5.5}\protected@file@percent }
 \bibstyle{plainnat}
 \bibcite{bhatnagar2009natural}{{1}{}{{}}{{}}}
 \bibcite{binev2011convergence}{{2}{}{{}}{{}}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.3}SVGD: function evaluations as dynamics}{16}{subsection.5.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.4}Uncertainty vs.\ error: different objectives}{16}{subsection.5.4}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.5}Policy methods: end-to-end meta-learning}{16}{subsection.5.5}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {6}Conclusion}{16}{section.6}\protected@file@percent }
 \bibcite{bubeck2018sampling}{{3}{}{{}}{{}}}
 \bibcite{davis2007methods}{{4}{}{{}}{{}}}
 \bibcite{deVore2013greedy}{{5}{}{{}}{{}}}
@@ -126,6 +113,7 @@
 \bibcite{liu2016stein}{{11}{}{{}}{{}}}
 \bibcite{liu2017stein}{{12}{}{{}}{{}}}
 \bibcite{maddison2016concrete}{{13}{}{{}}{{}}}
+\@writefile{toc}{\contentsline {section}{\numberline {6}Conclusion}{13}{section.6}\protected@file@percent }
 \bibcite{mclachlan2019finite}{{14}{}{{}}{{}}}
 \bibcite{mnih2016asynchronous}{{15}{}{{}}{{}}}
 \bibcite{niederreiter1992random}{{16}{}{{}}{{}}}
@@ -139,4 +127,4 @@
 \bibcite{williams1992simple}{{24}{}{{}}{{}}}
 \bibcite{xu2019understanding}{{25}{}{{}}{{}}}
 \providecommand\NAT@force@numbers{}\NAT@force@numbers
-\gdef \@abspage@last{18}
+\gdef \@abspage@last{14}

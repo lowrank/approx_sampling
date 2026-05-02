@@ -506,81 +506,25 @@ experiment suite.
 We demonstrate the methods on
 
 \begin{equation}
-  f(x) = \sin(2\pi x) + 2e^{-200(x-0.3)^2} - 1.5e^{-300(x-0.7)^2},
+  f(x) = \sin(2\pi x) + \sum_{k=1}^5 a_k e^{-(x-\mu_k)^2/(2\sigma_k^2)},
 \end{equation}
 
-a smooth oscillatory background with two narrow Gaussian spikes at
-$x=0.3$ and $x=0.7$ (FWHM $\approx 2.4\%$ and $2.0\%$ of $[0,1]$).
-A uniform grid of 64--192 points places only 1--2 points within each spike.
+with five narrow Gaussian spikes of alternating signs placed at
+$x\in\{0.15,0.32,0.50,0.68,0.84\}$ (FWHM $\approx 1.5$--$2.5\%$ of
+$[0,1]$).  At budget 128 a uniform grid places only 1--2 points per spike.
+
+We compare two architectures: \textbf{MMNN} (rank 15, width 1000) and a
+standard \textbf{MLP} ($[32,32,32,32]$, $\tanh$).  All 12 algorithms are
+run for 12\,000 effective gradient steps with learning rate $1.5\times10^{-3}$.
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=\textwidth]{figures/spike_bg_results.pdf}
-  \caption{Top: test function.  Bottom: $L^2$ error vs.\ budget.}
-  \label{fig:spike_bg}
-\end{figure}
-
-\begin{table}[H]
-  \centering
-  \caption{$L^2$ errors at budget 192 on the spike+bg function.}
-  \label{tab:spike_bg}
-  \small
-  \begin{tabular}{@{}lrlr@{}}
-    \toprule
-    Algorithm & $L^2$ error & Algorithm & $L^2$ error \\
-    \midrule
-    diffusion          & $3.1\times10^{-3}$ & iter\_chebyshev    & $2.3\times10^{-2}$ \\
-    importance\_sampling & $1.9\times10^{-3}$ & iter\_uniform      & $3.2\times10^{-2}$ \\
-    policy             & $2.4\times10^{-3}$ & chebyshev          & $7.4\times10^{-2}$ \\
-    adversarial        & $2.4\times10^{-3}$ & qmc\_halton        & $5.1\times10^{-2}$ \\
-    mdn                & $2.5\times10^{-3}$ & qmc\_sobol         & $4.5\times10^{-2}$ \\
-    normalizing\_flow   & $3.2\times10^{-3}$ & uniform            & $5.7\times10^{-2}$ \\
-    neural\_process     & $2.9\times10^{-3}$ & adaptive\_residual  & $1.4\times10^{-2}$ \\
-    gp\_ucb            & $1.6\times10^{-2}$ &                    & \\
-    \bottomrule
-  \end{tabular}
-\end{table}
-
-The learnable methods achieve errors $\sim 2$--$4\times10^{-3}$, while
-uniform and Chebyshev are $\sim 25\times$ worse.  The adaptive residual
-method is intermediate at $1.4\times10^{-2}$.
-
-Figure~\ref{fig:spike_bg_residuals} shows the pointwise residuals
-$f(x)-u_\theta(x)$ for every algorithm, grouped by performance.
-
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=\textwidth]{figures/spike_bg_residuals_g1.pdf}
-  \caption{Residuals (group 1/5): best 3 algorithms.}
-  \label{fig:spike_bg_residuals_g1}
-\end{figure}
-
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=\textwidth]{figures/spike_bg_residuals_g2.pdf}
-  \caption{Residuals (group 2/5).}
-  \label{fig:spike_bg_residuals_g2}
-\end{figure}
-
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=\textwidth]{figures/spike_bg_residuals_g3.pdf}
-  \caption{Residuals (group 3/5).}
-  \label{fig:spike_bg_residuals_g3}
-\end{figure}
-
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=\textwidth]{figures/spike_bg_residuals_g4.pdf}
-  \caption{Residuals (group 4/5).}
-  \label{fig:spike_bg_residuals_g4}
-\end{figure}
-
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=\textwidth]{figures/spike_bg_residuals_g5.pdf}
-  \caption{Residuals (group 5/5): worst 3 algorithms.  Note the larger
-           $y$-axis scale — the spike regions dominate.}
+  \includegraphics[width=\textwidth]{figures/spike_bg_residuals.pdf}
+  \caption{Pointwise residuals $f(x)-u_\theta(x)$ and sampling-point
+           histograms at budget 128.  Top section: MMNN.  Bottom section:
+           MLP.  Within each section algorithms are sorted by $L^2$ error.
+           Blue/orange histograms show where each method allocated its 128
+           samples.}
   \label{fig:spike_bg_residuals}
 \end{figure}
 worse.  Adaptive residual ($7.1\times10^{-3}$) is competitive but 2--3$\times$

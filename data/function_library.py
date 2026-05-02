@@ -119,6 +119,19 @@ def _wide_bump(x: np.ndarray) -> np.ndarray:
     return np.exp(-20.0 * (x - 0.55) ** 2) * np.sin(12.0 * math.pi * x)
 
 
+def _hat_spike_bg(x: np.ndarray) -> np.ndarray:
+    """Smooth sin background + 5 hat (triangular) bumps, L²-normalised."""
+    def hat(x, mu, w):
+        return np.maximum(0.0, 1.0 - np.abs(x - mu) / w)
+    raw = (np.sin(2*np.pi*x)
+        + 8.0 * hat(x, 0.15, 0.020)
+        - 7.0 * hat(x, 0.32, 0.015)
+        + 6.0 * hat(x, 0.50, 0.022)
+        - 8.0 * hat(x, 0.68, 0.016)
+        + 7.0 * hat(x, 0.84, 0.018))
+    return raw / 1.93121  # L² normalisation constant
+
+
 # ---------------------------------------------------------------------------
 # Local-variation helpers (oracle difficulty indicators)
 # ---------------------------------------------------------------------------
@@ -262,13 +275,8 @@ FUNCTION_LIBRARY: Dict[str, TestFunction] = {
     ),
     "spike_bg_demo": TestFunction(
         name="spike_bg_demo",
-        label=r"$\sin(2\pi x)+\sum \mathrm{spikes}$",
-        callable=lambda x: (np.sin(2*np.pi*x)
-            + 8.0*np.exp(-1500*(x-0.15)**2)
-            - 7.0*np.exp(-2000*(x-0.32)**2)
-            + 6.0*np.exp(-1200*(x-0.50)**2)
-            - 8.0*np.exp(-1800*(x-0.68)**2)
-            + 7.0*np.exp(-1400*(x-0.84)**2)) / 1.52,
+        label=r"$\sin(2\pi x)+\sum \mathrm{hat\ bumps}$",
+        callable=lambda x: _hat_spike_bg(x),
         dense_resolution=4000,
         local_variation=None,
     ),

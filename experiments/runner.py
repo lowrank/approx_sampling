@@ -73,10 +73,11 @@ def _build_algorithms(
     power-of-two budgets (currently ``qmc_sobol``) are omitted.
     """
     algs: List[Tuple[str, Any]] = []
-    TARGET = 40000  # target gradient steps for all methods
+    TARGET = 40000
     batch = 32
     n_rounds_est = max(1, budget // batch)
     batches_per_epoch = max(1, budget // batch)
+    WARMUP = 10  # steps at init_lr before decay starts
 
     def _epochs(target: int = TARGET) -> int:
         return max(50, target // batches_per_epoch)

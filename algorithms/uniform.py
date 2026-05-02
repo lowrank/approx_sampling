@@ -61,9 +61,8 @@ class UniformSampling(BaseSamplingAlgorithm):
         y_train = task.source_values(x_train)
 
         opt = torch.optim.Adam(self.model.parameters(), lr=self.lr)
-        scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(
-            opt, T_max=self.epochs
-        )
+        WARMUP = 10
+        DECAY = 0.999
 
         x_t = torch.from_numpy(x_train.astype(np.float32)).to(self.device)
         y_t = torch.from_numpy(y_train.astype(np.float32)).to(self.device)
@@ -71,6 +70,7 @@ class UniformSampling(BaseSamplingAlgorithm):
         loader = DataLoader(dataset, batch_size=self.batch_size, shuffle=True)
 
         l2_history = []
+        grad_step = 0
 
         self.model.train()
         for ep in range(self.epochs):
@@ -79,7 +79,13 @@ class UniformSampling(BaseSamplingAlgorithm):
                 loss = torch.mean(task.pointwise_loss(self.model, bx))
                 loss.backward()
                 opt.step()
-            scheduler.step()
+                grad_step += 1
+                if grad_step >= WARMUP:
+                    for g in opt.param_groups:
+                        g["lr"] = self.lr * (DECAY ** (grad_step - WARMUP))
+            if grad_step < WARMUP:
+                for g in opt.param_groups:
+                    g["lr"] = self.lr  # keep initial lr during warmup
 
             if ep % 100 == 0 or ep == self.epochs - 1:
                 err = task.compute_l2_error(self.model, eval_grid)

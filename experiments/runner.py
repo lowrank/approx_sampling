@@ -33,6 +33,7 @@ from algorithms.normalizing_flow import MonotonicFlow1D, NormalizingFlowSampling
 from algorithms.mdn import MDNSampler, MDNSampling
 from algorithms.policy_sampler import PolicyNetwork, PolicySampling
 from algorithms.neural_process import NeuralProcessSampler, NeuralProcessSampling
+from algorithms.trainable_points import TrainablePointsSampling
 from algorithms.qmc import QMCSampling
 from algorithms.uniform import UniformSampling
 from data.function_library import FUNCTION_LIBRARY
@@ -65,7 +66,7 @@ def _build_algorithms(
     model_factory: Callable[[], nn.Module],
     device: str,
     skip_power_of_two: bool = False,
-    lr: float = 3e-3,
+    lr: float = 1.5e-3,  # for MLP
 ) -> List[Tuple[str, Any]]:
     """Return list of (name, algorithm_instance) for a given *budget*.
 
@@ -154,8 +155,15 @@ def _build_algorithms(
         budget=budget, model=model_factory(),
         np_sampler=NeuralProcessSampler(n_bins=32, dim_h=128, dim_r=128),
         batch_size=batch, total_theta_steps=8000, n_np_steps_per_outer=20,
-        lr_theta=1e-3, lr_np=1e-3,
+        lr_theta=lr, lr_np=lr,
         entropy_weight=0.05, initial_random=20, device=device,
+    )))
+
+    # --- Trainable points (direct point optimisation) ---
+    algs.append(("trainable_points", TrainablePointsSampling(
+        budget=budget, model=model_factory(),
+        batch_size=batch, n_rounds=20, theta_steps_per_round=2000,
+        point_lr=0.02, merge_tol=0.005, lr_theta=lr, device=device,
     )))
 
     # --- Diffusion / score-matching ---
@@ -186,7 +194,7 @@ def run_experiment(
     device: str = "cpu",
     output_dir: str = "results",
     seed: int = 42,
-    lr: float = 3e-3,
+    lr: float = 1.5e-3,  # for MLP
 ) -> Dict[str, Any]:
     """Run multi-budget evaluation.
 

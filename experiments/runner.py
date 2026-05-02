@@ -73,9 +73,9 @@ def _build_algorithms(
     power-of-two budgets (currently ``qmc_sobol``) are omitted.
     """
     algs: List[Tuple[str, Any]] = []
-    TARGET = 12000  # target gradient steps for all methods
-    batch = 64
-    n_rounds_est = max(1, budget // batch)  # ~ outer iterations
+    TARGET = 40000  # target gradient steps for all methods
+    batch = 32
+    n_rounds_est = max(1, budget // batch)
     batches_per_epoch = max(1, budget // batch)
 
     def _epochs(target: int = TARGET) -> int:
@@ -84,41 +84,41 @@ def _build_algorithms(
     # --- Empirical ---
     algs.append(("uniform", UniformSampling(
         budget=budget, model=model_factory(),
-        epochs=_epochs(), batch_size=64, lr=lr, device=device,
+        epochs=_epochs(), batch_size=batch, lr=lr, device=device,
     )))
     algs.append(("chebyshev", ChebyshevSampling(
         budget=budget, model=model_factory(),
-        epochs=_epochs(), batch_size=64, lr=lr, device=device,
+        epochs=_epochs(), batch_size=batch, lr=lr, device=device,
     )))
     if not skip_power_of_two:
         algs.append(("qmc_sobol", QMCSampling(
             budget=budget, model=model_factory(),
-            sequence="sobol", epochs=_epochs(), batch_size=64, lr=lr, device=device,
+            sequence="sobol", epochs=_epochs(), batch_size=batch, lr=lr, device=device,
         )))
     algs.append(("qmc_halton", QMCSampling(
         budget=budget, model=model_factory(),
-        sequence="halton", epochs=_epochs(), batch_size=64, lr=lr, device=device,
+        sequence="halton", epochs=_epochs(), batch_size=batch, lr=lr, device=device,
     )))
     algs.append(("adaptive_residual", AdaptiveResidualSampling(
         budget=budget, model=model_factory(),
         n_initial=min(budget, max(20, budget // 4)),
         n_add=min(50, max(10, budget // 8)),
         candidate_size=2000, epochs_per_round=_epochs(TARGET//4), final_epochs=_epochs(TARGET//2),
-        batch_size=64, lr=lr, device=device,
+        batch_size=batch, lr=lr, device=device,
     )))
 
     # --- Learnable: REINFORCE-based ---
     algs.append(("adversarial", AdversarialSampling(
         budget=budget, model=model_factory(),
         generator=PiecewiseConstantGenerator(32),
-        batch_size=64, total_theta_steps=8000, n_phi_steps_per_outer=20,
+        batch_size=batch, total_theta_steps=8000, n_phi_steps_per_outer=20,
         lr_theta=1e-3, lr_phi=1e-2,
         entropy_weight=0.05, baseline_momentum=0.9, device=device,
     )))
     algs.append(("importance_sampling", ImportanceSampling(
         budget=budget, model=model_factory(),
         proposal=PiecewiseConstantGenerator(32),
-        batch_size=64, total_theta_steps=8000, n_phi_steps_per_outer=20,
+        batch_size=batch, total_theta_steps=8000, n_phi_steps_per_outer=20,
         lr_theta=1e-3, lr_phi=1e-2,
         entropy_weight=0.05, baseline_momentum=0.9, device=device,
     )))
@@ -127,14 +127,14 @@ def _build_algorithms(
     algs.append(("normalizing_flow", NormalizingFlowSampling(
         budget=budget, model=model_factory(),
         flow=MonotonicFlow1D(64),
-        batch_size=64, total_theta_steps=8000, n_flow_steps_per_outer=30,
+        batch_size=batch, total_theta_steps=8000, n_flow_steps_per_outer=30,
         lr_theta=1e-3, lr_flow=1e-3,
         entropy_weight=0.02, device=device,
     )))
     algs.append(("mdn", MDNSampling(
         budget=budget, model=model_factory(),
         mdn=MDNSampler(n_components=8),
-        batch_size=64, total_theta_steps=8000, n_mdn_steps_per_outer=30,
+        batch_size=batch, total_theta_steps=8000, n_mdn_steps_per_outer=30,
         lr_theta=1e-3, lr_mdn=1e-3,
         entropy_weight=0.02, device=device,
     )))
@@ -143,7 +143,7 @@ def _build_algorithms(
     algs.append(("policy", PolicySampling(
         budget=budget, model=model_factory(),
         policy=PolicyNetwork(n_bins=32, hidden_dim=64),
-        n_bins=32, batch_size=64, total_theta_steps=8000,
+        n_bins=32, batch_size=batch, total_theta_steps=8000,
         n_policy_steps_per_outer=10,
         lr_theta=1e-3, lr_policy=1e-3, device=device,
     )))
@@ -152,7 +152,7 @@ def _build_algorithms(
     algs.append(("neural_process", NeuralProcessSampling(
         budget=budget, model=model_factory(),
         np_sampler=NeuralProcessSampler(n_bins=32, dim_h=128, dim_r=128),
-        batch_size=64, total_theta_steps=8000, n_np_steps_per_outer=20,
+        batch_size=batch, total_theta_steps=8000, n_np_steps_per_outer=20,
         lr_theta=1e-3, lr_np=1e-3,
         entropy_weight=0.05, initial_random=20, device=device,
     )))
@@ -161,7 +161,7 @@ def _build_algorithms(
     algs.append(("diffusion", DiffusionSampling(
         budget=budget, model=model_factory(),
         score_net=ScoreNetwork1D(hidden_dim=64, n_layers=4),
-        batch_size=64, total_theta_steps=8000, n_score_steps_per_outer=50,
+        batch_size=batch, total_theta_steps=8000, n_score_steps_per_outer=50,
         sigma_min=0.01, sigma_max=1.0, n_sigma_levels=10,
         langevin_steps=10, langevin_step_size=2e-5,
         lr_theta=1e-3, lr_score=1e-3, device=device,

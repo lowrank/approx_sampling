@@ -519,13 +519,18 @@ run for 12\,000 effective gradient steps with learning rate $1.5\times10^{-3}$.
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=\textwidth]{figures/spike_bg_residuals.pdf}
-  \caption{Pointwise residuals $f(x)-u_\theta(x)$ and sampling-point
-           histograms at budget 128.  Top section: MMNN.  Bottom section:
-           MLP.  Within each section algorithms are sorted by $L^2$ error.
-           Blue/orange histograms show where each method allocated its 128
-           samples.}
-  \label{fig:spike_bg_residuals}
+  \includegraphics[width=\textwidth]{figures/spike_bg_MMNN.pdf}
+  \caption{MMNN (rank 15, width 1000) — pointwise residuals and sampling
+           histograms at budget 128.}
+  \label{fig:spike_bg_mmnn}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{figures/spike_bg_MLP.pdf}
+  \caption{MLP ($[32,32,32,32]$, $\tanh$) — pointwise residuals and sampling
+           histograms at budget 128.}
+  \label{fig:spike_bg_mlp}
 \end{figure}
 worse.  Adaptive residual ($7.1\times10^{-3}$) is competitive but 2--3$\times$
 behind the learnable methods that model the density with finer granularity.

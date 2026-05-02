@@ -264,12 +264,12 @@ FUNCTION_LIBRARY: Dict[str, TestFunction] = {
         name="spike_bg_demo",
         label=r"$\sin(2\pi x)+\sum \mathrm{spikes}$",
         callable=lambda x: (np.sin(2*np.pi*x)
-            + 2.5*np.exp(-300*(x-0.15)**2)
-            - 2.0*np.exp(-400*(x-0.32)**2)
-            + 1.8*np.exp(-250*(x-0.50)**2)
-            - 2.3*np.exp(-350*(x-0.68)**2)
-            + 2.1*np.exp(-280*(x-0.84)**2)) / 1.52,
-        dense_resolution=3000,
+            + 2.5*np.exp(-800*(x-0.15)**2)
+            - 2.0*np.exp(-1000*(x-0.32)**2)
+            + 1.8*np.exp(-600*(x-0.50)**2)
+            - 2.3*np.exp(-900*(x-0.68)**2)
+            + 2.1*np.exp(-700*(x-0.84)**2)) / 1.52,
+        dense_resolution=4000,
         local_variation=None,
     ),
 }

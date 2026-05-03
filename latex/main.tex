@@ -211,6 +211,15 @@ $w_i = 1/\hat{p}(x_i)$ (empirical histogram density, 64 bins) so that
 the empirical loss remains an unbiased Monte Carlo estimator of the
 true $L^2$ loss regardless of the generator's sampling distribution.
 
+\textbf{Why the generator is still essential.}
+IS weights guarantee \emph{unbiasedness} but not \emph{efficiency}: the
+variance of the IS-weighted gradient scales as
+$\int (u_\theta-f)^4/p_\phi(x)\,dx$.  Random $p_\phi$ gives exploding
+weights in sparse regions; only when $p_\phi\propto (u_\theta-f)^2$ do
+the weights cancel the error term and drive gradient variance to zero.
+The generator's max step learns this variance-minimising proposal,
+making IS \emph{efficient} — not just unbiased.
+
 \textbf{Guarantee (heuristic).}
 At the Nash equilibrium of~\eqref{eq:adversarial}, $p_\phi\propto
 |u_\theta-f|^2$, i.e.\ the generator samples proportionally to the

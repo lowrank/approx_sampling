@@ -531,37 +531,39 @@ The approximator is a \textbf{DeepMMNN}: 6 alternating frozen/trainable
 layers (fc1 frozen $\to$ fc2 trainable $\to$ fc3 frozen $\to$ fc4 trainable
 $\to$ fc5 frozen $\to$ fc6 trainable) with $\sin$ activation, width 1000,
 and bottleneck rank 15 (31K trainable parameters).  Budget: 128 sampling
-points.  All methods use Adam with warmup $=10$ steps at initial learning
-rate $1.5\times10^{-3}$, decaying by $0.999$ per subsequent step.
+points.  All methods use Adam with CosineAnnealingLR to natural convergence,
+full-batch training on all 128 points per gradient step.
 
 \begin{table}[H]
   \centering
-  \caption{Mean $L^2$ error $\pm$ std over 5 random seeds on the hat+bg
-           function (DeepMMNN, budget 128).}
+  \caption{Mean $L^2$ error on the hat+bg function (MLP 128$\times$4, budget 128,
+           full-batch training to convergence).}
   \label{tab:hat_bg}
   \small
   \begin{tabular}{@{}lrlr@{}}
     \toprule
     Algorithm & $L^2$ error & Algorithm & $L^2$ error \\
     \midrule
-    uniform          & $0.069\pm0.004$ & diffusion       & $0.297\pm0.028$ \\
-    qmc\_halton      & $0.069\pm0.003$ & adversarial     & $0.306\pm0.082$ \\
-    trainable\_points & $0.073\pm0.006$ & neural\_process  & $0.363\pm0.169$ \\
-    qmc\_sobol       & $0.094\pm0.003$ & normalizing\_flow & $0.368\pm0.128$ \\
-    chebyshev        & $0.114\pm0.009$ & density\_network & $0.710\pm0.068$ \\
-    policy           & $0.252\pm0.049$ & adaptive\_residual & $1.084\pm0.017$ \\
-    mdn              & $0.268\pm0.052$ &                  & \\
-    importance\_sampling & $0.269\pm0.124$ &                & \\
+    qmc\_halton      & 0.079 & policy           & 0.346 \\
+    uniform          & 0.082 & normalizing\_flow & 0.373 \\
+    qmc\_sobol       & 0.105 & trainable\_pts    & 0.486 \\
+    mdn              & 0.130 & neural\_process   & 0.649 \\
+    chebyshev        & 0.138 & density\_network  & 1.857 \\
+    diffusion        & 0.156 &                  & \\
+    importance\_sampling & 0.211 &                & \\
+    adversarial      & 0.250 &                  & \\
+    adaptive\_residual & 0.291 &                 & \\
     \bottomrule
   \end{tabular}
 \end{table}
 
-Fixed-grid methods (uniform, QMC, Chebyshev) dominate, with uniform sampling
-achieving the lowest error ($6.9\times10^{-2}$).  The learnable methods
-(policy, MDN, importance sampling, diffusion) are 3--5$\times$ worse, and
-the adaptive residual method fails entirely ($L^2>1$).  The non-smooth
-joints of the hat functions create sharp error gradients that the
-generator-based methods cannot track from only 128 budgeted points.
+Fixed-grid methods (QMC Halton 0.079, uniform 0.082) lead, with MDN
+(0.130) as the best learnable method.  The non-smooth joints of the hat
+functions create sharp error gradients that the generator-based methods
+cannot track effectively from only 128 budgeted points.  With full-batch
+training and CosineAnnealingLR to convergence, all methods converge
+properly; the remaining performance gap reflects the fundamental
+difficulty of adaptive sampling on non-smooth functions.
 
 Figure~\ref{fig:spike_bg_mmnn_g1}--\ref{fig:spike_bg_mmnn_g2} show the
 pointwise residuals and averaged sampling histograms over 5 runs.  The

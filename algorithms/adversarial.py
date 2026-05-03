@@ -24,7 +24,7 @@ import numpy as np
 import torch
 import torch.nn.functional as F
 
-from algorithms.base import AlgorithmResult, BaseSamplingAlgorithm
+from algorithms.base import AlgorithmResult, BaseSamplingAlgorithm, ConvergenceTracker
 from models.approximator import MLP, PiecewiseConstantGenerator
 
 
@@ -98,6 +98,7 @@ class AdversarialSampling(BaseSamplingAlgorithm):
         l2_history: list[float] = []
         all_points: list[torch.Tensor] = []
         all_values: list[torch.Tensor] = []
+        tracker = ConvergenceTracker(patience=3, tol=1e-4)
 
         self.model.train()
         self.generator.train()
@@ -162,6 +163,8 @@ class AdversarialSampling(BaseSamplingAlgorithm):
             if outer % log_freq == 0 or outer == n_outer - 1:
                 err = task.compute_l2_error(self.model, eval_grid)
                 l2_history.append(err)
+                if tracker.update(err):
+                    break
 
         pts = (
             np.unique(torch.cat(all_points).cpu().numpy())

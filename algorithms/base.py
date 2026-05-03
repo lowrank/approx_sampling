@@ -133,4 +133,31 @@ class BaseSamplingAlgorithm(ABC):
         return torch.from_numpy(w.astype(np.float32))
 
 
+class ConvergenceTracker:
+    """Early stopping based on L² error plateau.
+
+    Parameters
+    ----------
+    patience : int
+        Number of consecutive checks with no improvement before stopping.
+    tol : float
+        Minimum relative improvement to reset patience counter.
+    """
+
+    def __init__(self, patience: int = 5, tol: float = 1e-4) -> None:
+        self.patience = patience
+        self.tol = tol
+        self.best = float("inf")
+        self.waits = 0
+
+    def update(self, error: float) -> bool:
+        """Record *error*; return True if training should stop."""
+        if error < self.best * (1.0 - self.tol):
+            self.best = error
+            self.waits = 0
+        else:
+            self.waits += 1
+        return self.waits >= self.patience
+
+
 

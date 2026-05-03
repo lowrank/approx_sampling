@@ -614,8 +614,10 @@ We repeat the comparison on $f(x)=\sin(8\pi x)+0.5\cos(16\pi x)$
 The same pattern holds: fixed-grid methods outperform.
 
 \subsubsection{MLP on oscillatory}
+
 Switching to a standard MLP ($[128,128,128,128]$, $\tanh$, 50K parameters)
-eliminates the aliasing.  The ranking reverses:
+and proper training (CosineAnnealingLR, 40K gradient steps) eliminates the
+aliasing.  All methods converge properly:
 
 \begin{table}[H]
   \centering
@@ -626,32 +628,25 @@ eliminates the aliasing.  The ranking reverses:
     \toprule
     Algorithm & $L^2$ error \\
     \midrule
-    adaptive\_residual & 0.082 \\
-    diffusion          & 0.536 \\
-    adversarial        & 0.587 \\
-    chebyshev          & 0.707 \\
-    qmc\_halton        & 0.779 \\
-    uniform            & 0.779 \\
+    uniform          & 0.0031 \\
+    adversarial      & 0.0254 \\
+    chebyshev        & 0.0310 \\
+    diffusion        & 0.0353 \\
+    qmc\_sobol       & 0.0372 \\
+    qmc\_halton      & 0.0458 \\
+    adaptive\_residual & 0.0512 \\
     \bottomrule
   \end{tabular}
 \end{table}
 
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=\textwidth]{figures/osc_MLP.pdf}
-  \caption{Residuals on the oscillatory function with MLP.  Adaptive
-           residual now leads by $6.5\times$ over uniform sampling,
-           confirming that the MMNN's $\sin$ random features caused
-           aliasing that masked the benefits of adaptive sampling.}
-  \label{fig:osc_mlp}
-\end{figure}
-
-The adaptive residual method ($L^2=0.082$) beats uniform sampling ($0.779$)
-by nearly $10\times$, demonstrating that when the approximator can properly
-represent the target function, concentrating samples in high-error regions
-provides a decisive advantage.  The DeepMMNN's frozen $\sin$ random features
-create spectral aliasing that prevents the model from benefiting from
-adaptive sampling, even when points are correctly placed.
+With correct training, uniform sampling achieves $L^2=3.1\times10^{-3}$ —
+an excellent fit to the oscillatory function.  The adaptive residual method
+($5.1\times10^{-2}$) is worst, demonstrating that for smooth, uniformly
+complex functions, concentrating samples in error hotspots provides no
+benefit and can be counterproductive.  The previous poor results
+($L^2>0.5$) were caused by an exponentially decaying learning rate
+($0.999$ per step) that collapsed to near-zero after $\sim 5000$ steps,
+preventing all methods from converging.
 
 % ======================================================================
 \section{Discussion}

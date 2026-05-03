@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2024.12.18)  3 MAY 2026 11:13
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2024.12.18)  3 MAY 2026 12:21
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -554,7 +554,7 @@ File: figures/sharp_gallery.pdf Graphic file (type pdf)
 Package pdftex.def Info: figures/sharp_gallery.pdf  used on input line 123.
 (pdftex.def)             Requested size: 466.62503pt x 358.1716pt.
  [3 <./figures/oscillatory_gallery.pdf>] [4 <./figures/sharp_gallery.pdf>]
-Overfull \hbox (14.02356pt too wide) in paragraph at lines 250--255
+Overfull \hbox (14.02356pt too wide) in paragraph at lines 254--259
 []\OT1/cmr/bx/n/10.95 Guarantee (vari-ance re-duc-tion). \OT1/cmr/m/n/10.95 The
  repa-ram-e-ter-i-sa-tion gra-di-ent has vari-ance $\OML/cmm/m/it/10.95 O\OT1/c
 mr/m/n/10.95 (1)$ (bounded
@@ -563,15 +563,15 @@ mr/m/n/10.95 (1)$ (bounded
 [5] [6]
 
 Package natbib Warning: Citation `garnelo2018conditional' on page 7 undefined o
-n input line 394.
+n input line 398.
 
 
 Package natbib Warning: Citation `garnelo2018neural' on page 7 undefined on inp
-ut line 394.
+ut line 398.
 
 
 Package natbib Warning: Citation `garnelo2018conditional' on page 7 undefined o
-n input line 434.
+n input line 438.
 
 [7] (./results_table.tex
 Overfull \hbox (112.73256pt too wide) in paragraph at lines 6--21
@@ -598,10 +598,10 @@ Overfull \hbox (69.89359pt too wide) in paragraph at lines 52--60
 File: figures/convergence_summary.pdf Graphic file (type pdf)
 <use figures/convergence_summary.pdf>
 Package pdftex.def Info: figures/convergence_summary.pdf  used on input line 49
-0.
+4.
 (pdftex.def)             Requested size: 466.62503pt x 250.75073pt.
  [8]
-Overfull \hbox (32.33163pt too wide) in paragraph at lines 498--503
+Overfull \hbox (32.33163pt too wide) in paragraph at lines 502--507
 \OT1/cmr/m/n/10.95 Sampling-point dis-tri-bu-tion his-tograms for in-di-vid-ual
  func-tions are gen-er-ated by \OT1/cmtt/m/n/10.95 latex/plot[]results.py
  []
@@ -610,28 +610,28 @@ Overfull \hbox (32.33163pt too wide) in paragraph at lines 498--503
 <figures/spike_bg_MMNN_g1.pdf, id=524, 719.08401pt x 916.18788pt>
 File: figures/spike_bg_MMNN_g1.pdf Graphic file (type pdf)
 <use figures/spike_bg_MMNN_g1.pdf>
-Package pdftex.def Info: figures/spike_bg_MMNN_g1.pdf  used on input line 560.
+Package pdftex.def Info: figures/spike_bg_MMNN_g1.pdf  used on input line 564.
 (pdftex.def)             Requested size: 466.62503pt x 594.53647pt.
  [10]
 <figures/spike_bg_MMNN_g2.pdf, id=532, 715.22708pt x 916.18788pt>
 File: figures/spike_bg_MMNN_g2.pdf Graphic file (type pdf)
 <use figures/spike_bg_MMNN_g2.pdf>
-Package pdftex.def Info: figures/spike_bg_MMNN_g2.pdf  used on input line 569.
+Package pdftex.def Info: figures/spike_bg_MMNN_g2.pdf  used on input line 573.
 (pdftex.def)             Requested size: 466.62503pt x 597.73787pt.
  [11 <./figures/spike_bg_MMNN_g1.pdf>] [12 <./figures/spike_bg_MMNN_g2.pdf>]
 <figures/osc_DeepMMNN.pdf, id=653, 715.26157pt x 800.55588pt>
 File: figures/osc_DeepMMNN.pdf Graphic file (type pdf)
 <use figures/osc_DeepMMNN.pdf>
-Package pdftex.def Info: figures/osc_DeepMMNN.pdf  used on input line 607.
+Package pdftex.def Info: figures/osc_DeepMMNN.pdf  used on input line 611.
 (pdftex.def)             Requested size: 466.62503pt x 522.273pt.
  [13] [14 <./figures/osc_DeepMMNN.pdf>]
 <figures/nonperiodic_MLP.pdf, id=718, 719.13731pt x 916.18788pt>
 File: figures/nonperiodic_MLP.pdf Graphic file (type pdf)
 <use figures/nonperiodic_MLP.pdf>
-Package pdftex.def Info: figures/nonperiodic_MLP.pdf  used on input line 679.
+Package pdftex.def Info: figures/nonperiodic_MLP.pdf  used on input line 683.
 (pdftex.def)             Requested size: 466.62503pt x 594.48056pt.
  [15] [16 <./figures/nonperiodic_MLP.pdf>]
-Overfull \hbox (5.34418pt too wide) in paragraph at lines 718--721
+Overfull \hbox (5.34418pt too wide) in paragraph at lines 722--727
 []\OT1/cmr/bx/n/10.95 REINFORCE \OT1/cmr/m/n/10.95 (ad-ver-sar-ial, im-por-tanc
 e sam-pling): con-sis-tent but high-variance; the moving-
  []
@@ -674,7 +674,7 @@ exmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb></usr/share/texlive/texmf-d
 ist/fonts/type1/public/amsfonts/cm/cmtt10.pfb></usr/share/texlive/texmf-dist/fo
 nts/type1/public/amsfonts/symbols/msbm10.pfb></usr/share/texmf/fonts/type1/publ
 ic/cm-super/sfrm1095.pfb>
-Output written on main.pdf (19 pages, 1775369 bytes).
+Output written on main.pdf (19 pages, 1775976 bytes).
 PDF statistics:
  914 PDF objects out of 1000 (max. 8388607)
  428 compressed objects within 5 object streams

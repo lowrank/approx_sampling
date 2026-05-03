@@ -206,6 +206,10 @@ are trained adversarially:
 The generator gradient is estimated via the score-function (REINFORCE)
 estimator with a moving-average baseline~\citep{williams1992simple}.
 An entropy bonus prevents the generator from collapsing to a single bin.
+\textbf{The approximator $u_\theta$ is trained with importance weights}
+$w_i = 1/\hat{p}(x_i)$ (empirical histogram density, 64 bins) so that
+the empirical loss remains an unbiased Monte Carlo estimator of the
+true $L^2$ loss regardless of the generator's sampling distribution.
 
 \textbf{Guarantee (heuristic).}
 At the Nash equilibrium of~\eqref{eq:adversarial}, $p_\phi\propto
@@ -717,7 +721,9 @@ distinction is the gradient estimator:
 \begin{itemize}
   \item \textbf{REINFORCE} (adversarial, importance sampling):
         consistent but high-variance; the moving-average baseline and
-        entropy regulariser are essential for stability.
+        entropy regulariser are essential for stability.  \textbf{All non-uniform sampling methods in this paper
+apply the same histogram-based IS weighting} to correct for sampling
+density and keep the training loss unbiased.
   \item \textbf{Reparameterisation} (flow, MDN):
         lower-variance gradients at the cost of architectural constraints
         (monotonicity for the flow, Gumbel-Softmax for MDN).

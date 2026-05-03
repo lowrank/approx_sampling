@@ -648,6 +648,46 @@ benefit and can be counterproductive.  The previous poor results
 ($0.999$ per step) that collapsed to near-zero after $\sim 5000$ steps,
 preventing all methods from converging.
 
+\subsubsection{Non-periodic oscillatory-decay}
+
+To test whether uniform's success is due to periodicity, we evaluate on
+$f(x)=\sin(10\pi x)\,e^{-3x}$, whose oscillation amplitude decays
+exponentially across $[0,1]$.
+
+\begin{table}[H]
+  \centering
+  \caption{$L^2$ errors (MLP 128$\times$4, budget 128).}
+  \label{tab:nonper}
+  \small
+  \begin{tabular}{@{}lr@{}}
+    \toprule
+    Algorithm & $L^2$ error \\
+    \midrule
+    adversarial      & 0.0016 \\
+    uniform          & 0.0021 \\
+    qmc\_sobol       & 0.0061 \\
+    chebyshev        & 0.0095 \\
+    qmc\_halton      & 0.0101 \\
+    adaptive\_residual & 0.0259 \\
+    diffusion        & 0.0268 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{figures/nonperiodic_MLP.pdf}
+  \caption{Non-periodic decay function.  Adversarial wins by concentrating
+           samples on the oscillatory left side while uniform wastes points
+           on the damped right side.}
+  \label{fig:nonper}
+\end{figure}
+
+The adversarial generator learns to allocate more points to the
+high-frequency region ($x<0.3$) and sparse points to the damped region
+($x>0.7$), beating uniform by 25\%.  The $e^{-3x}$ envelope breaks the
+periodicity that favoured regular sampling.
+
 % ======================================================================
 \section{Discussion}
 % ======================================================================

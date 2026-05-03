@@ -688,6 +688,13 @@ high-frequency region ($x<0.3$) and sparse points to the damped region
 ($x>0.7$), beating uniform by 25\%.  The $e^{-3x}$ envelope breaks the
 periodicity that favoured regular sampling.
 
+At the smaller budget of 64 points ($n_{\text{outer}}=2$), the ranking
+reverses: Chebyshev (0.0084) and uniform (0.0097) beat adversarial
+(0.0114), because the generator lacks sufficient outer iterations to
+learn the sampling distribution.  A crossover occurs between budget
+64 and 128: the learnable methods need a critical mass of feedback
+rounds to become effective.
+
 % ======================================================================
 \section{Discussion}
 % ======================================================================

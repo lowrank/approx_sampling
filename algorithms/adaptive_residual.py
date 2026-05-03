@@ -85,9 +85,7 @@ class AdaptiveResidualSampling(BaseSamplingAlgorithm):
     ) -> None:
         """Train *model* on fixed dataset for *epochs* passes."""
         opt = torch.optim.Adam(model.parameters(), lr=lr)
-        scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(
-            opt, T_max=epochs
-        )
+        WARMUP, DECAY = 10, 0.999
 
         x_t = torch.from_numpy(x_np.astype(np.float32)).to(device)
         y_t = torch.from_numpy(y_np.astype(np.float32)).to(device)
@@ -95,13 +93,17 @@ class AdaptiveResidualSampling(BaseSamplingAlgorithm):
         loader = DataLoader(dataset, batch_size=batch_size, shuffle=True)
 
         model.train()
+        grad_step = 0
         for _ in range(epochs):
             for bx, _ in loader:
                 opt.zero_grad()
                 loss = torch.mean(task.pointwise_loss(model, bx))
                 loss.backward()
                 opt.step()
-            scheduler.step()
+                grad_step += 1
+                if grad_step >= WARMUP:
+                    for g in opt.param_groups:
+                        g["lr"] = lr * (DECAY ** (grad_step - WARMUP))
 
     def run(
         self,

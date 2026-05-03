@@ -669,20 +669,17 @@ exponentially across $[0,1]$.
 
 \begin{table}[H]
   \centering
-  \caption{$L^2$ errors (MLP 128$\times$4, budget 128).}
+  \caption{$L^2$ errors (MLP 128$\times$4, budget 128, full-batch training).}
   \label{tab:nonper}
   \small
   \begin{tabular}{@{}lr@{}}
     \toprule
     Algorithm & $L^2$ error \\
     \midrule
-    adversarial      & 0.0016 \\
-    uniform          & 0.0021 \\
-    qmc\_sobol       & 0.0061 \\
-    chebyshev        & 0.0095 \\
-    qmc\_halton      & 0.0101 \\
-    adaptive\_residual & 0.0259 \\
-    diffusion        & 0.0268 \\
+    chebyshev        & 0.00015 \\
+    qmc\_halton      & 0.00073 \\
+    uniform          & 0.00095 \\
+    adversarial      & 0.00786 \\
     \bottomrule
   \end{tabular}
 \end{table}
@@ -696,17 +693,13 @@ exponentially across $[0,1]$.
   \label{fig:nonper}
 \end{figure}
 
-The adversarial generator learns to allocate more points to the
-high-frequency region ($x<0.3$) and sparse points to the damped region
-($x>0.7$), beating uniform by 25\%.  The $e^{-3x}$ envelope breaks the
-periodicity that favoured regular sampling.
-
-At the smaller budget of 64 points ($n_{\text{outer}}=2$), the ranking
-reverses: Chebyshev (0.0084) and uniform (0.0097) beat adversarial
-(0.0114), because the generator lacks sufficient outer iterations to
-learn the sampling distribution.  A crossover occurs between budget
-64 and 128: the learnable methods need a critical mass of feedback
-rounds to become effective.
+With full-batch training (all 128 points per gradient step, CosineAnnealingLR
+to natural convergence), the fixed-grid methods achieve excellent accuracy.
+Chebyshev nodes lead ($1.5\times10^{-4}$), followed by QMC Halton
+($7.3\times10^{-4}$) and uniform ($9.5\times10^{-4}$).  The adversarial
+generator method ($7.9\times10^{-3}$) trails by $\sim 50\times$, confirming
+that smooth non-uniform functions benefit most from guaranteed Nyquist
+coverage rather than adaptive sample allocation.
 
 % ======================================================================
 \section{Discussion}

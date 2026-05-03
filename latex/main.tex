@@ -565,27 +565,26 @@ training and CosineAnnealingLR to convergence, all methods converge
 properly; the remaining performance gap reflects the fundamental
 difficulty of adaptive sampling on non-smooth functions.
 
-Figure~\ref{fig:spike_bg_mmnn_g1}--\ref{fig:spike_bg_mmnn_g2} show the
+Figure~\ref{fig:spike_bg_mlp_g1}--\ref{fig:spike_bg_mlp_g2} show the
 pointwise residuals and averaged sampling histograms over 5 runs.  The
 fixed-grid methods show small, evenly-distributed errors while the
 learnable methods exhibit large residuals at the hat kinks.
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=\textwidth]{figures/spike_bg_MMNN_g1.pdf}
-  \caption{DeepMMNN — mean residual $\pm 1\sigma$ over 5 seeds, group 1/2
-           (best 7 algorithms).  Blue histograms show averaged sampling
-           distributions.}
-  \label{fig:spike_bg_mmnn_g1}
+  \includegraphics[width=\textwidth]{figures/spike_bg_MLP_g1.pdf}
+  \caption{MLP $[128,128,128,128]$ — residuals and sampling histograms,
+           group 1/2 (best 7 algorithms).  Orange histograms show where
+           points were allocated.}
+  \label{fig:spike_bg_mlp_g1}
 \end{figure}
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=\textwidth]{figures/spike_bg_MMNN_g2.pdf}
-  \caption{DeepMMNN — group 2/2 (remaining 7 algorithms).  Learnable methods
-           show larger errors concentrated at the hat-bump kinks, confirming
-           that the generators fail to locate the non-smooth features.}
-  \label{fig:spike_bg_mmnn_g2}
+  \includegraphics[width=\textwidth]{figures/spike_bg_MLP_g2.pdf}
+  \caption{MLP — group 2/2.  Learnable methods over-concentrate at the
+           hat kinks while neglecting the smooth background.}
+  \label{fig:spike_bg_mlp_g2}
 \end{figure}
 
 The finding contradicts the common assumption that adaptive or generative

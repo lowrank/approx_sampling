@@ -92,7 +92,7 @@ class ImportanceSampling(BaseSamplingAlgorithm):
 
         opt_theta = torch.optim.Adam(self.model.parameters(), lr=self.lr_theta)
         opt_phi = torch.optim.Adam(self.proposal.parameters(), lr=self.lr_phi)
-        WARMUP, DECAY = 10, 0.999
+        sched_theta = torch.optim.lr_scheduler.CosineAnnealingLR(opt_theta, T_max=self.total_theta_steps)
 
         baseline = 0.0
         l2_history: list[float] = []
@@ -104,7 +104,6 @@ class ImportanceSampling(BaseSamplingAlgorithm):
         self.proposal.train()
 
         log_freq = max(1, n_outer // 10)
-        step_counter = 0
 
         for outer in range(n_outer):
             # ---- 1. Draw new batch from proposal ----
@@ -141,10 +140,7 @@ class ImportanceSampling(BaseSamplingAlgorithm):
                 is_loss = torch.mean(w_buf[idx] * w * task.pointwise_loss(self.model, bx))
                 is_loss.backward()
                 opt_theta.step()
-                if step_counter >= WARMUP:
-                    for g in opt_theta.param_groups:
-                        g["lr"] = self.lr_theta * (DECAY ** (step_counter - WARMUP))
-                step_counter += 1
+                sched_theta.step()
 
             # ---- 3. Evaluate losses on current batch for φ update ----
             with torch.no_grad():
@@ -188,7 +184,6 @@ class ImportanceSampling(BaseSamplingAlgorithm):
             sampling_points=pts,
             extra_info={
                 "final_probs": self.proposal.probs.detach().cpu().tolist(),
-                "total_theta_steps": step_counter,
             },
             trained_model=self.model,
         )

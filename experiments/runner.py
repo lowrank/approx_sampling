@@ -75,9 +75,8 @@ def _build_algorithms(
     power-of-two budgets (currently ``qmc_sobol``) are omitted.
     """
     algs: List[Tuple[str, Any]] = []
-    TARGET = 200000  # large enough for convergence
-    batch = 8  # smaller batch → more outer iterations for learnable methods
-    CONVERGE_TOL = 1e-3  # L² error improvement threshold
+    TARGET = 40000
+    batch = 32
     n_rounds_est = max(1, budget // batch)
     batches_per_epoch = max(1, budget // batch)
     WARMUP = 10  # steps at init_lr before decay starts
@@ -115,14 +114,14 @@ def _build_algorithms(
     algs.append(("adversarial", AdversarialSampling(
         budget=budget, model=model_factory(),
         generator=PiecewiseConstantGenerator(32),
-        batch_size=batch, total_theta_steps=8000, n_phi_steps_per_outer=200,
+        batch_size=batch, total_theta_steps=TARGET, n_phi_steps_per_outer=20,
         lr_theta=1e-3, lr_phi=1e-2,
         entropy_weight=0.05, baseline_momentum=0.9, device=device,
     )))
     algs.append(("importance_sampling", ImportanceSampling(
         budget=budget, model=model_factory(),
         proposal=PiecewiseConstantGenerator(32),
-        batch_size=batch, total_theta_steps=8000, n_phi_steps_per_outer=200,
+        batch_size=batch, total_theta_steps=TARGET, n_phi_steps_per_outer=20,
         lr_theta=1e-3, lr_phi=1e-2,
         entropy_weight=0.05, baseline_momentum=0.9, device=device,
     )))
@@ -131,7 +130,7 @@ def _build_algorithms(
     algs.append(("normalizing_flow", NormalizingFlowSampling(
         budget=budget, model=model_factory(),
         flow=MonotonicFlow1D(64),
-        batch_size=batch, total_theta_steps=8000, n_flow_steps_per_outer=200,
+        batch_size=batch, total_theta_steps=8000, n_flow_steps_per_outer=30,
         lr_theta=1e-3, lr_flow=1e-3,
         entropy_weight=0.02, device=device,
     )))
@@ -172,7 +171,7 @@ def _build_algorithms(
     algs.append(("density_network", DensityNetworkSampling(
         budget=budget, model=model_factory(),
         density_net=DensityNetwork(hidden_dim=64, n_layers=3, n_grid=2000),
-        batch_size=batch, total_theta_steps=TARGET, n_density_steps=5000,
+        batch_size=batch, total_theta_steps=TARGET, n_density_steps=30,
         lr_theta=lr, lr_density=lr, entropy_weight=0.02, device=device,
     )))
 

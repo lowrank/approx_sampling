@@ -290,7 +290,7 @@ class DiffusionSampling(BaseSamplingAlgorithm):
 
         opt_theta = torch.optim.Adam(self.model.parameters(), lr=self.lr_theta)
         opt_score = torch.optim.Adam(self.score_net.parameters(), lr=self.lr_score)
-        WARMUP, DECAY = 10, 0.999
+        sched_theta = torch.optim.lr_scheduler.CosineAnnealingLR(opt_theta, T_max=self.total_theta_steps)
 
         l2_history: list[float] = []
         all_points: list[torch.Tensor] = []
@@ -300,7 +300,6 @@ class DiffusionSampling(BaseSamplingAlgorithm):
         self.score_net.train()
 
         log_freq = max(1, n_outer // 10)
-        step_counter = 0
 
         for outer in range(n_outer):
             # ---- 1. Sample new points via annealed Langevin ----
@@ -326,10 +325,7 @@ class DiffusionSampling(BaseSamplingAlgorithm):
                 loss = torch.mean(w_buf[idx] * task.pointwise_loss(self.model, bx))
                 loss.backward()
                 opt_theta.step()
-                if step_counter >= WARMUP:
-                    for g in opt_theta.param_groups:
-                        g["lr"] = self.lr_theta * (DECAY ** (step_counter - WARMUP))
-                step_counter += 1
+                sched_theta.step()
 
             # ---- 3. Compute error weights for score-model training ----
             with torch.no_grad():
@@ -359,7 +355,6 @@ class DiffusionSampling(BaseSamplingAlgorithm):
             l2_error_history=l2_history,
             sampling_points=pts,
             extra_info={
-                "total_theta_steps": step_counter,
                 "sigma_levels": self.sigma_levels,
             },
             trained_model=self.model,

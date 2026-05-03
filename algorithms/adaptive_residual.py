@@ -15,7 +15,7 @@ import numpy as np
 import torch
 from torch.utils.data import DataLoader, TensorDataset
 
-from algorithms.base import AlgorithmResult, BaseSamplingAlgorithm, ConvergenceTracker
+from algorithms.base import AlgorithmResult, BaseSamplingAlgorithm
 from models.approximator import MLP
 
 
@@ -114,7 +114,6 @@ class AdaptiveResidualSampling(BaseSamplingAlgorithm):
         y_train = task.source_values(x_train)
 
         l2_history: list[float] = []
-        tracker = ConvergenceTracker(patience=3, tol=1e-4)
         n_used = self.n_initial
         current_budget = self.budget
 
@@ -129,8 +128,6 @@ class AdaptiveResidualSampling(BaseSamplingAlgorithm):
             # Evaluate L^2 error
             err = task.compute_l2_error(self.model, eval_grid)
             l2_history.append(err)
-            if tracker.update(err):
-                break
 
             # Compute pointwise error on candidate grid
             self.model.eval()

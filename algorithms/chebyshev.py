@@ -14,7 +14,7 @@ import numpy as np
 import torch
 from torch.utils.data import DataLoader, TensorDataset
 
-from algorithms.base import AlgorithmResult, BaseSamplingAlgorithm, ConvergenceTracker
+from algorithms.base import AlgorithmResult, BaseSamplingAlgorithm
 from models.approximator import MLP
 
 
@@ -82,7 +82,6 @@ class ChebyshevSampling(BaseSamplingAlgorithm):
         loader = DataLoader(dataset, batch_size=self.batch_size, shuffle=True)
 
         l2_history = []
-        tracker = ConvergenceTracker(patience=10, tol=1e-4)
 
         self.model.train()
         for ep in range(self.epochs):
@@ -96,8 +95,6 @@ class ChebyshevSampling(BaseSamplingAlgorithm):
             if ep % 100 == 0 or ep == self.epochs - 1:
                 err = task.compute_l2_error(self.model, eval_grid)
                 l2_history.append(err)
-                if tracker.update(err):
-                    break
 
         return AlgorithmResult(
             algorithm_name=self.algorithm_name,

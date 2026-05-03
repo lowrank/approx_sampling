@@ -87,20 +87,20 @@ def _build_algorithms(
     # --- Empirical ---
     algs.append(("uniform", UniformSampling(
         budget=budget, model=model_factory(),
-        epochs=_epochs(), batch_size=batch, lr=lr, device=device,
+        epochs=TARGET, batch_size=budget, lr=lr, device=device,
     )))
     algs.append(("chebyshev", ChebyshevSampling(
         budget=budget, model=model_factory(),
-        epochs=_epochs(), batch_size=batch, lr=lr, device=device,
+        epochs=TARGET, batch_size=budget, lr=lr, device=device,
     )))
     if not skip_power_of_two:
         algs.append(("qmc_sobol", QMCSampling(
             budget=budget, model=model_factory(),
-            sequence="sobol", epochs=_epochs(), batch_size=batch, lr=lr, device=device,
+            sequence="sobol", epochs=TARGET, batch_size=budget, lr=lr, device=device,
         )))
     algs.append(("qmc_halton", QMCSampling(
         budget=budget, model=model_factory(),
-        sequence="halton", epochs=_epochs(), batch_size=batch, lr=lr, device=device,
+        sequence="halton", epochs=TARGET, batch_size=budget, lr=lr, device=device,
     )))
     algs.append(("adaptive_residual", AdaptiveResidualSampling(
         budget=budget, model=model_factory(),
